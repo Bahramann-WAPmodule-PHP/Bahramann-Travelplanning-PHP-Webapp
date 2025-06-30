@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-
+import { useNavigate } from 'react-router-dom';
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
@@ -157,7 +158,7 @@ const validateInput = () => {
           </div>
           <button className="button bg-mainRed w-full" onClick={handleSubmit}>Signup</button>
           <p className="text-center mt-4 text-gray-500">
-            Already have an account? <a href="#" className="text-blue-500">click here to login </a>
+            Already have an account? <button  className="text-blue-500" onClick={()=>navigate('/login')}>click here to login </button>
           </p>
         </div>
       </div>

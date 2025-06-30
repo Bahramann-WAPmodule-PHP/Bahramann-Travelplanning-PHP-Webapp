@@ -1,24 +1,33 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
 
-export default function Modal({open, setOpen}) {;
+export default function Modal({ open, setOpen }) {
   return (
-<div>
-    <div
-      className={
-        'fixed inset-0 justify-self-end flex items-center justify-center bg-white h-[100vh] z-50 w-1/2  md:w-2/10 sm:w-3/10 shadow-lg transition-transform duration-300 ' +
-        (open ? 'translate-x-0' : 'translate-x-full')
-      }
-    >
-      <button>
-        <FontAwesomeIcon
-          icon={faArrowRight}
-          className="text-2xl cursor-pointer text-mainRed absolute top-4 right-4"
-          onClick={() => setOpen(false)}
-        />
-      </button>
+    <div>
+      <div
+        className={
+          'fixed inset-0 justify-self-end flex flex-col items-start bg-white h-[100vh] z-50 w-1/2 md:w-2/10 sm:w-3/10 shadow-lg transition-transform duration-300 ' +
+          (open ? 'translate-x-0' : 'translate-x-full')
+        }
+      >
+        <button className="self-end m-4">
+          <FontAwesomeIcon
+            icon={faArrowRight}
+            className="text-2xl cursor-pointer text-mainRed"
+            onClick={() => setOpen(false)}
+          />
+        </button>
+        <nav className="flex flex-col gap-6 mt-8 w-full">
+          <Link to="/" className="links" onClick={() => setOpen(false)}>
+            Home
+          </Link>
+            <Link to="/Search" className="links" onClick={() => setOpen(false)}>
+            Serch Destination
+          </Link>
+        </nav>
+      </div>
     </div>
-</div>
   )
 }

@@ -3,8 +3,11 @@ import bgImage from '../assets/Background/bgImage.jpg'
 import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+const isLoggedIn = true;
+const navigate = useNavigate();
 
     const destinations = [
       {
@@ -39,9 +42,9 @@ export default function Home() {
 
     const FirstSection = () => {
         return(
-                  <div className='w-full h-screen flex items-center justify-center bg-cover bg-center'>
+                  <div className='w-full h-screen flex justify-center bg-cover bg-center'>
         <div
-          className='w-9/10 h-11/12 overflow-hidden shadow-lg flex items-center justify-center text-white p-10 relative rounded-2xl'
+          className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl mt-5'
           style={{
             backgroundImage: `url(${bgImage})`,
             backgroundSize: 'cover',
@@ -58,6 +61,14 @@ export default function Home() {
     }
 
     const PopularDestinations = () => {
+      const handleViewMore = () => {
+        if (isLoggedIn) {
+          navigate('/search');
+        } else {
+          alert('You have to login/signup first');
+        }
+      };
+
         return (
             <div className="w-full flex flex-col items-center p-10">
             <h2 className="text-3xl font-bold text-darkBlue mb-2 text-center">Popular Destinations</h2>
@@ -71,7 +82,9 @@ export default function Home() {
                     </div>
                 ))}
             </div>
-            <button  className='button  bg-mainRed m-10 '>View more</button>
+            <button className='button bg-mainRed m-10' onClick={handleViewMore}>
+          View more
+        </button>
         </div>
         )
     }

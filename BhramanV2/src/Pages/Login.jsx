@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({
     email: '',
     password: '',
@@ -35,9 +36,6 @@ export default function Login() {
     } else if (!isValidEmail(email)) {
       setFieldError('email', 'Invalid email format');
       valid = false;
-    } else if (email !== 'test@example.com') {
-      setFieldError('email', 'No user found with this email');
-      valid = false;
     }
 
     if (!password) {
@@ -46,23 +44,41 @@ export default function Login() {
     } else if (!isStrongPassword(password)) {
       setFieldError('password', 'Password must be at least 6 characters');
       valid = false;
-    } else if (email === 'test@example.com' && password !== 'password123') {
-      setFieldError('password', 'Incorrect password');
-      valid = false;
     }
 
     return valid;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setErrors({ email: '', password: '', general: '' });
 
-    setTimeout(() => {
-      if (validateInput()) {
-        console.log('Login successful!');
-        // handle success (e.g., redirect or show toast)
+    if (!validateInput()) return;
+
+    try {
+      const response = await fetch('http://localhost/samir/main.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: new URLSearchParams({
+          email,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        navigate('/');
+      } else {
+        if (data.error.includes('email')) setFieldError('email', data.error);
+        else if (data.error.includes('Password')) setFieldError('password', data.error);
+        else setFieldError('general', data.error);
       }
-    }, 100); // simulate async
+    } catch (err) {
+      setFieldError('general', 'Server error. Please try again.');
+    }
   };
 
   return (
@@ -78,37 +94,39 @@ export default function Login() {
             <p className="text-red-500 text-center mb-4">{errors.general}</p>
           )}
 
-          <div className="mb-6">
-            <input
-              type="email"
-              id="Email"
-              value={email}
-              onChange={(e) => handleInputChange(e, 'email')}
-              placeholder="Email Address"
-              className={`w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 focus:outline-none`}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-          </div>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="mb-6">
+              <input
+                type="email"
+                id="Email"
+                value={email}
+                onChange={(e) => handleInputChange(e, 'email')}
+                placeholder="Email Address"
+                className={`w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 focus:outline-none`}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
 
-          <div className="mb-6">
-            <input
-              type="password"
-              id="Password"
-              value={password}
-              onChange={(e) => handleInputChange(e, 'password')}
-              placeholder="Password"
-              className={`w-full border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 focus:outline-none`}
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
+            <div className="mb-6">
+              <input
+                type="password"
+                id="Password"
+                value={password}
+                onChange={(e) => handleInputChange(e, 'password')}
+                placeholder="Password"
+                className={`w-full border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 focus:outline-none`}
+              />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            </div>
 
-          <button className="button bg-mainRed w-full text-white py-2 rounded" onClick={handleSubmit}>
-            Login
-          </button>
+            <button type="submit" className="button bg-mainRed w-full text-white py-2 rounded">
+              Login
+            </button>
+          </form>
 
           <p className="text-center mt-4 text-gray-500">
-            Don't have an account? <a href="#" className="text-blue-500">Click here to signup</a>
-          </p>
+            Don't have an account? <button onClick={() =>navigate("/signup") } className="text-blue-500">Click here to signup</button>
+          </p> 
         </div>
       </div>
     </div>
