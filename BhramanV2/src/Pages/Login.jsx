@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({
     email: '',
@@ -63,7 +64,8 @@ export default function Login() {
         },
         body: new URLSearchParams({
           email,
-          password
+          password,
+          rememberMe: rememberMe ? '1' : '0'
         })
       });
 
@@ -73,7 +75,7 @@ export default function Login() {
         navigate('/');
       } else {
         if (data.error.includes('email')) setFieldError('email', data.error);
-        else if (data.error.includes('Password')) setFieldError('password', data.error);
+        else if (data.error.includes('password')) setFieldError('password', data.error);
         else setFieldError('general', data.error);
       }
     } catch (err) {
@@ -119,14 +121,25 @@ export default function Login() {
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
 
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+                className="mr-2"
+              />
+              <label htmlFor="rememberMe" className="text-gray-700 text-sm">Remember Me</label>
+            </div>
+
             <button type="submit" className="button bg-mainRed w-full text-white py-2 rounded">
               Login
             </button>
           </form>
 
           <p className="text-center mt-4 text-gray-500">
-            Don't have an account? <button onClick={() =>navigate("/signup") } className="text-blue-500">Click here to signup</button>
-          </p> 
+            Don't have an account? <button onClick={() => navigate("/signup")} className="text-blue-500">Click here to signup</button>
+          </p>
         </div>
       </div>
     </div>
