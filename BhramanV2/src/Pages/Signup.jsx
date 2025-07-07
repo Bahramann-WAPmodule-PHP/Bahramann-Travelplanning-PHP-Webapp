@@ -82,7 +82,7 @@ const validateInput = () => {
 
 
 
-  const handleSubmit = () => {
+const handleSubmit = async () => {
   setErrors({
     firstName: '',
     lastName: '',
@@ -91,12 +91,35 @@ const validateInput = () => {
     general: ''
   });
 
-  setTimeout(() => {
-    if (validateInput()) {
-      console.log('Form submitted successfully!');
+  if (!validateInput()) return;
+
+  try {
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('emailAddress', emailAddress);
+    formData.append('password', password);
+
+    const response = await fetch('/api/samir/main.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Signup successful → redirect to login
+      navigate('/login');
+    } else {
+      // Show server-side error (e.g. "User already exists")
+      setErrors(prev => ({ ...prev, general: data.error || 'Signup failed' }));
     }
-  }, 100);
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    setErrors(prev => ({ ...prev, general: 'Network error occurred' }));
+  }
 };
+
 
 
  

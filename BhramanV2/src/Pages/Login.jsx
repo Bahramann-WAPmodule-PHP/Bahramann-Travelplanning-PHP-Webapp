@@ -57,7 +57,7 @@ export default function Login() {
     if (!validateInput()) return;
 
     try {
-      const response = await fetch('http://localhost/samir/main.php', {
+      const response = await fetch('/api/samir/main.php', {
         method: 'POST',
         headers: {
           'Accept': 'application/json'
