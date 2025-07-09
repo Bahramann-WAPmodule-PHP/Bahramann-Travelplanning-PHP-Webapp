@@ -4,9 +4,10 @@ import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'
 
 export default function Home() {
-const isLoggedIn = true;
+  const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn)
 const navigate = useNavigate();
 
     const destinations = [

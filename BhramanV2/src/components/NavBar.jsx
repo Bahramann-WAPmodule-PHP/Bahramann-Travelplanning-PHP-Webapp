@@ -3,9 +3,10 @@ import Logo from '../assets/logo/red.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 export default function NavBar({ open, setOpen }) {
   const navigate = useNavigate()
-    const isLoggedIn = false
+  const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn)
   return (
     <nav className='fixed top-0 w-full h-[75px] flex items-center justify-between p-4 bg-white shadow-md z-50'>
       <img src={Logo} alt="" className='h-[50px]' />

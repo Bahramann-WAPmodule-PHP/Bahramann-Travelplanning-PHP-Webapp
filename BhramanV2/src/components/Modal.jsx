@@ -2,6 +2,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+import Logout from './Logout'
 
 export default function Modal({ open, setOpen }) {
   return (
@@ -26,6 +27,7 @@ export default function Modal({ open, setOpen }) {
             <Link to="/Search" className="links" onClick={() => setOpen(false)}>
             Serch Destination
           </Link>
+          <Logout />
         </nav>
       </div>
     </div>

@@ -48,32 +48,82 @@ if (isset($post['firstName'], $post['lastName'], $post['emailAddress'], $post['p
 
 // Login
 if (isset($post['email'], $post['password'])) {
-    $email = trim($post['email']);
-    $user = getUserByEmail($mysqli, $email);
-    if (!$user) {
-        echo json_encode(['success' => false, 'error' => 'email not found']);
-        exit;
-    }
-    if (!password_verify($post['password'], $user['password_hash'])) {
-        echo json_encode(['success' => false, 'error' => 'password incorrect']);
+  $email = trim($post['email']);
+  $user = getUserByEmail($mysqli, $email);
+  if (!$user) {
+    echo json_encode(['success' => false, 'error' => 'email not found']);
+    exit;
+  }
+  if (!password_verify($post['password'], $user['password_hash'])) {
+    echo json_encode(['success' => false, 'error' => 'password incorrect']);
+    exit;
+  }
+
+  $_SESSION['user_id'] = $user['id'];
+
+  if (isset($post['rememberMe']) && $post['rememberMe'] === '1') {
+    $token = bin2hex(random_bytes(32));
+    setRememberToken($mysqli, $user['id'], $token);
+    setcookie('remember_token', $token, time() + (86400 * 30), "/", "", false, true);
+  } else {
+    setRememberToken($mysqli, $user['id'], null);
+    setcookie('remember_token', '', time() - 3600, "/", "", false, true);
+  }
+
+  echo json_encode(['success' => true]);
+  exit;
+}
+
+// session_start(); already called
+
+// Handle session check (GET request)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_SESSION['user_id'])) {
+        echo json_encode(['isLoggedIn' => true]);
         exit;
     }
 
-    $_SESSION['user_id'] = $user['id'];
+    // Try to login using remember token
+    if (isset($_COOKIE['remember_token'])) {
+        $token = $_COOKIE['remember_token'];
+        $stmt = $mysqli->prepare("SELECT * FROM users WHERE remember_token = ?");
+        $stmt->bind_param('s', $token);
+        $stmt->execute();
+        $user = $stmt->get_result()->fetch_assoc();
 
-    // Remember Me
-    if (isset($post['rememberMe']) && $post['rememberMe'] === '1') {
-        $token = bin2hex(random_bytes(32));
-        setRememberToken($mysqli, $user['id'], $token);
-        setcookie('remember_token', $token, time() + (86400 * 30), "/", "", false, true);
-    } else {
-        setRememberToken($mysqli, $user['id'], null);
-        setcookie('remember_token', '', time() - 3600, "/", "", false, true);
+        if ($user) {
+            $_SESSION['user_id'] = $user['id']; // restore session
+            echo json_encode(['isLoggedIn' => true]);
+            exit;
+        }
     }
+
+    echo json_encode(['isLoggedIn' => false]);
+    exit;
+}
+
+// Logout
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($post['action']) && $post['action'] === 'logout') {
+    // Clear session
+    session_unset();
+    session_destroy();
+
+    // Remove remember_token from database (optional but recommended)
+    if (isset($_COOKIE['remember_token'])) {
+        $token = $_COOKIE['remember_token'];
+        $stmt = $mysqli->prepare("UPDATE users SET remember_token = NULL WHERE remember_token = ?");
+        $stmt->bind_param('s', $token);
+        $stmt->execute();
+    }
+
+    // Clear cookie
+    setcookie('remember_token', '', time() - 3600, "/", "", false, true);
 
     echo json_encode(['success' => true]);
     exit;
 }
+
+
 
 echo json_encode(['success' => false, 'error' => 'Invalid request']);
 exit;
