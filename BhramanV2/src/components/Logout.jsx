@@ -9,7 +9,7 @@ export default function Logout() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost/Bhramanapp/Backend/server/logout.php", {
+      const response = await fetch("http://localhost/Bhramanapp/Backend/server/auth/logout.php", {
         method: "POST"
       });
 

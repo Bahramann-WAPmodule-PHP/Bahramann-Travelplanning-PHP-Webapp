@@ -70,7 +70,7 @@ const handleSubmit = async (e) => {
     formData.append('password', password);
     formData.append('rememberMe', rememberMe ? '1' : '0');
     
-    const response = await fetch("http://localhost/Bhramanapp/Backend/server/login.php", {
+    const response = await fetch("http://localhost/Bhramanapp/Backend/server/auth/login.php", {
       method: "POST",
       body: formData
     });

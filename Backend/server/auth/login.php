@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 
-require '../config/db.php';
+require '../../config/db.php';
 
 #sanitized data
 $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);

@@ -54,6 +54,11 @@
       ```bash
       npm run dev
       ```
+-   **database:**
+    -   To create a database just simply run in the brower it will automatically create the database in the database server:
+      ```
+      http://localhost/Bhraman-Travelplanning-PHP-Webapp/Backend/setup.php
+      ```
 
 
 

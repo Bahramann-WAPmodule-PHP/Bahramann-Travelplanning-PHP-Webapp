@@ -1,18 +1,18 @@
 <?php
-require '../config/db.php';
+require '../../config/db.php';
 
-// Set headers for CORS and JSON responses
+#Set headers for CORS and JSON responses
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 header('Content-Type: application/json');
 
-// Handle preflight OPTIONS request for CORS
+#Handle preflight OPTIONS request for CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-// Start session if not already started
+#Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -25,7 +25,7 @@ if (!$isLoggedIn && isset($_COOKIE['remember_me'])) {
     list($selector, $validator) = explode(':', $_COOKIE['remember_me']);
     
     try {
-        // Get token from database
+        #Get token from database
         $stmt = $conn->prepare("
             SELECT user_id, username, email 
             FROM users 
@@ -36,13 +36,14 @@ if (!$isLoggedIn && isset($_COOKIE['remember_me'])) {
         $user = $stmt->fetch();
         
         if ($user) {
-            // Extract token parts
+            #Extract token parts
             $token = $conn->query("SELECT session_token FROM users WHERE user_id = " . $user['user_id'])->fetchColumn();
             list($dbSelector, $dbHash) = explode(':', $token);
             
-            // Verify token
+            #Verify token
             if (hash_equals($dbHash, hash('sha256', $validator))) {
-                // Auto-login the user
+                
+                #Auto-login the user
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
@@ -55,7 +56,7 @@ if (!$isLoggedIn && isset($_COOKIE['remember_me'])) {
                     'email' => $user['email']
                 ];
                 
-                // Refresh the remember me token
+                #Refresh the remember me token
                 $newValidator = bin2hex(random_bytes(32));
                 $hashedValidator = hash('sha256', $newValidator);
                 $expires = date('Y-m-d H:i:s', time() + 30 * 24 * 60 * 60); // 30 days
@@ -102,7 +103,7 @@ if ($isLoggedIn && $userData === null && isset($_SESSION['user_id'])) {
     }
 }
 
-// Return authentication status
+#Return authentication status
 $response = [
     'isLoggedIn' => $isLoggedIn
 ];
