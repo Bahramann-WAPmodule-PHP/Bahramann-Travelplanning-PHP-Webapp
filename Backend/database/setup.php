@@ -11,7 +11,7 @@ $dbname = 'bhramanv2';
 
 echo "<h1>Setting up Database</h1>";
 
-try {
+try {}
     $conn = new PDO("mysql:host=$host", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     

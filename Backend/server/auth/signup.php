@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-require '../config/db.php';
+require '../../config/db.php';
 
 #sanitize data and get user data
 $firstName = filter_input(INPUT_POST, 'firstName', FILTER_SANITIZE_STRING);
