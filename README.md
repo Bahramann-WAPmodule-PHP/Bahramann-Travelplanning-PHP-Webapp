@@ -1,4 +1,4 @@
-# Bahramann-Travelplanning-PHP-Webapp
+# Bhramanapp
 
 **Bahraman** is a comprehensive PHP-based travel booking web application tailored to Nepal's tourism ecosystem. It simplifies travel planning by integrating verified destination reviews, real-time availability, and instant bookings, all in a single, secure portal.
 
@@ -6,12 +6,12 @@
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Bahramann-WAPmodule-PHP/Bahramann-Travelplanning-PHP-Webapp.git
+    git clone https://github.com/Bahramann-WAPmodule-PHP/Bhramanapp.git
     ```
 
 2.  **Navigate to the project directory:**
     ```bash
-    cd Bahramann-Travelplanning-PHP-Webapp
+    cd Bhramanapp
     ```
 
 ---
@@ -19,7 +19,7 @@
 ### Backend Setup
 
 1.  **Move Project:**
-    -   Place the cloned `Bahramann-Travelplanning-PHP-Webapp` folder into your XAMPP `htdocs` directory.
+    -   Place the cloned `Bhramanapp` folder into your XAMPP `htdocs` directory.
 
 2.  **Start Servers:**
     -   Open the XAMPP control panel.
@@ -46,7 +46,7 @@
 -   **Backend:**
     -   Once Apache is running, the backend is accessible. You can test the connection by navigating to:
       ```
-      http://localhost/Bahramann-Travelplanning-PHP-Webapp/Backend/main.php
+      http://localhost/Bhramanapp/Backend/main.php
       ```
 
 -   **Frontend:**
@@ -57,7 +57,7 @@
 -   **database:**
     -   To create a database just simply run in the brower it will automatically create the database in the database server:
       ```
-      http://localhost/Bhraman-Travelplanning-PHP-Webapp/Backend/setup.php
+      http://localhost/Bhramanapp/Backend/setup.php
       ```
 
 
