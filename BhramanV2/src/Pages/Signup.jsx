@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({
     firstName: '',
@@ -169,16 +173,26 @@ const handleSubmit = async () => {
             {errors.emailAddress && <p className="text-red-500 text-sm mt-1">{errors.emailAddress}</p>}
           </div>
           <div className="mb-6">
+            <div className="relative">
             <input
-              type="password"
-              id="Pass"
+              type={showPassword ? "text" : "password"}
+              id="password"
               value={password}
               onChange={(e) => handleInputChange(e, 'password')}
-              placeholder="Password"
-              className={`w-full border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 focus:outline-none`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.password ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 focus:ring-mainRed'
+                }`}
+              placeholder="Enter your password"
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500"
+            />
           </div>
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+        </div>
+
+        {errors.general && <p className="text-red-500 text-center mb-4">{errors.general}</p>}
           <button className="button bg-mainRed w-full" onClick={handleSubmit}>Signup</button>
           <p className="text-center mt-4 text-gray-500">
             Already have an account? <button  className="text-blue-500" onClick={()=>navigate('/login')}>click here to login </button>
