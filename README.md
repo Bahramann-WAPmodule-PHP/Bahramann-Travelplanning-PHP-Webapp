@@ -57,7 +57,7 @@
 -   **database:**
     -   To create a database just simply run in the brower it will automatically create the database in the database server:
       ```
-      http://localhost/Bhramanapp/Backend/setup.php
+      http://localhost/Bhramanapp/Backend/database/setup.php
       ```
 
 
