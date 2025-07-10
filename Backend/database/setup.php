@@ -11,7 +11,7 @@ $dbname = 'bhramanv2';
 
 echo "<h1>Setting up Database</h1>";
 
-try {}
+try {
     $conn = new PDO("mysql:host=$host", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
@@ -149,7 +149,7 @@ try {}
     echo "<p><strong>Database setup completed successfully!</strong></p>";
     echo "<p>You can <a href='?sample=1'>add sample data</a> if needed.</p>";
     
-} catch(PDOException $e) {
+    } catch(PDOException $e) {
     echo "<p style='color:red'>ERROR: " . $e->getMessage() . "</p>";
 }
 

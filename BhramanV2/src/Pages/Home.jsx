@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import bgImage from '../assets/Background/bgImage.jpg'
-import bgImage1 from '../assets/Background/bgimage1.jpg'
-import bgImage2 from '../assets/Background/bgimage2.jpg'
-import bgImage3 from '../assets/Background/bgimage3.jpg'
 import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
@@ -13,14 +10,7 @@ export default function Home() {
   const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn)
   const navigate = useNavigate();
   
-  // Define slider images for the hero section using all images from Background folder
-  const sliderImages = [
-    bgImage,
-    bgImage1,
-    bgImage2,
-    bgImage3,
-    // Add more images as needed
-  ];
+
 
     const destinations = [
       {
@@ -54,35 +44,23 @@ export default function Home() {
     ];
 
     const FirstSection = () => {
-        const [currentImageIndex, setCurrentImageIndex] = useState(0);
-        
-        useEffect(() => {
-            const interval = setInterval(() => {
-                setCurrentImageIndex(prevIndex => 
-                    prevIndex === sliderImages.length - 1 ? 0 : prevIndex + 1
-                );
-            }, 2000); // Change image every 1 second
-            
-            return () => clearInterval(interval); // Clean up interval on unmount
-        }, []);
-        
         return(
-                  <div className='w-full h-[calc(100vh-75px)] flex justify-center bg-cover bg-center pt-0.1'>
-        <div
-          className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl'
-          style={{
-            backgroundImage: `url(${sliderImages[currentImageIndex]})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            transition: 'background-image 0.5s ease-in-out'
-          }}>
-          <div className="absolute inset-0 bg-black/30 z-0"></div>
-          <div>
-            <p className='text-4xl relative z-10 text-center'>Discover Nepal's Hidden Gems</p>
-            <p className='text-[18px] relative  z-10 text-center'>Experience the beauty, culture, and adventure that awaits you</p>
-          </div>
-        </div>
-      </div>
+            <div className='w-full h-[calc(100vh-75px)] flex justify-center bg-cover bg-center pt-0.1'>
+                <div
+                    className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl'
+                    style={{
+                        backgroundImage: `url(${bgImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                >
+                    <div className="absolute inset-0 bg-black/30 z-0"></div>
+                    <div>
+                        <p className='text-4xl relative z-10 text-center'>Discover Nepal's Hidden Gems</p>
+                        <p className='text-[18px] relative z-10 text-center'>Experience the beauty, culture, and adventure that awaits you</p>
+                    </div>
+                </div>
+            </div>
         );
     }
 
