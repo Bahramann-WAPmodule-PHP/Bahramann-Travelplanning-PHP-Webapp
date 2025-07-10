@@ -3,6 +3,7 @@ import bgImage from '../assets/Background/bgImage.jpg'
 import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 
@@ -70,6 +71,7 @@ export default function Home() {
           navigate('/search');
         } else {
           alert('You have to login/signup first');
+          navigate('/login');
         }
       };
 
@@ -80,7 +82,7 @@ export default function Home() {
                These are some of the most popular destinations in Nepal, each offering unique experiences and breathtaking views.
             </p>
             <div className="w-full flex flex-wrap justify-center gap-6">
-                {destinations.map((dest, idx) => (
+                {destinations.slice(0, 3).map((dest, idx) => (
                     <div key={idx} className="w-full sm:w-[300px] flex justify-center">
                         <Card {...dest} />
                     </div>
