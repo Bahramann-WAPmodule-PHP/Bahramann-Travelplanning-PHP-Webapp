@@ -12,19 +12,17 @@ $dbname = 'bhramanv2';
 echo "<h1>Setting up Database</h1>";
 
 try {
-    // Connect without database first (to create it)
     $conn = new PDO("mysql:host=$host", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Create database if it doesn't exist
+
     $conn->exec("CREATE DATABASE IF NOT EXISTS $dbname");
     echo "<p>Database '$dbname' created or already exists.</p>";
     
-    // Connect to the database
+
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Create users table
     $sql = "
     CREATE TABLE IF NOT EXISTS users (
         user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,7 +37,6 @@ try {
     $conn->exec($sql);
     echo "<p>Table 'users' created or already exists.</p>";
     
-    // Create hotel table
     $sql = "
     CREATE TABLE IF NOT EXISTS hotel (
         hotel_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,7 +48,7 @@ try {
     $conn->exec($sql);
     echo "<p>Table 'hotel' created or already exists.</p>";
     
-    // Create location table
+
     $sql = "
     CREATE TABLE IF NOT EXISTS location (
         location_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,7 +65,6 @@ try {
     $conn->exec($sql);
     echo "<p>Table 'location' created or already exists.</p>";
     
-    // Create booking table
     $sql = "
     CREATE TABLE IF NOT EXISTS booking (
         booking_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -84,7 +80,6 @@ try {
     $conn->exec($sql);
     echo "<p>Table 'booking' created or already exists.</p>";
     
-    // Create comment table
     $sql = "
     CREATE TABLE IF NOT EXISTS comment (
         comment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,9 +94,9 @@ try {
     $conn->exec($sql);
     echo "<p>Table 'comment' created or already exists.</p>";
     
-    // Add sample user if requested
     if (isset($_GET['sample'])) {
-        // Check if the test user already exists
+        
+        #Check if the test user already exists
         $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute(['test@example.com']);
         $userExists = (int)$stmt->fetchColumn() > 0;
@@ -118,7 +113,7 @@ try {
             echo "<p>Sample user already exists</p>";
         }
         
-        // Add sample hotel if it doesn't exist
+        #Add sample hotel if it doesn't exist
         $stmt = $conn->prepare("SELECT COUNT(*) FROM hotel WHERE hotel_name = ?");
         $stmt->execute(['Mountain View Resort']);
         $hotelExists = (int)$stmt->fetchColumn() > 0;
@@ -131,7 +126,7 @@ try {
             $stmt->execute(['Mountain View Resort', 199.99, 50]);
             $hotelId = $conn->lastInsertId();
             
-            // Add sample location
+            #Add sample location
             $stmt = $conn->prepare("
                 INSERT INTO location (location_name, total_rating, number_of_ratings, description, image_url, hotel_id, vehicle_type) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)
