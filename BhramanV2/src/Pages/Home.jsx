@@ -43,9 +43,9 @@ const navigate = useNavigate();
 
     const FirstSection = () => {
         return(
-                  <div className='w-full h-screen flex justify-center bg-cover bg-center'>
+                  <div className='w-full h-[calc(100vh-75px)] flex justify-center items-center bg-cover bg-center'>
         <div
-          className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl mt-5'
+          className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl'
           style={{
             backgroundImage: `url(${bgImage})`,
             backgroundSize: 'cover',
@@ -121,11 +121,46 @@ const navigate = useNavigate();
         );
     }
 
+    const Footer = () => {
+        return (
+            <footer className="bg-gray-100 py-8 px-4">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Bhraman</h3>
+                            <p className="text-gray-600">Your gateway to exploring the beauty of Nepal. Plan your next adventure with us.</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Quick Links</h3>
+                            <ul className="space-y-2">
+                                <li><a href="/" className="text-gray-600 hover:text-mainRed">Home</a></li>
+                                <li><a href="/search" className="text-gray-600 hover:text-mainRed">Destinations</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">About Us</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Contact</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Legal</h3>
+                            <ul className="space-y-2">
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Privacy Policy</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500">
+                        <p>&copy; 2025 Bhraman. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        );
+    }
+
   return (
     <div>
         <FirstSection/>
         <PopularDestinations/>
         <WhyChooseBhraman/>
+        <Footer/>
     </div>
   )
 }

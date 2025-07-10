@@ -12,7 +12,7 @@ export default function NavBar({ open, setOpen }) {
       <img src={Logo} alt="" className='h-[50px]' />
 
       <div className='flex items-center gap-4'>
-        {isLoggedIn ? ("") : (<div><button className='button bg-mainRed' onClick={()=>navigate("/login")}>Login</button> <span className='text-mainRed'></span> <button className='button bg-mainRed' onClick={()=>navigate("/signup")}>Register</button></div>)}
+        {isLoggedIn ? ("") : (<div className="flex items-center gap-2"><button className='button bg-mainRed' onClick={()=>navigate("/login")}>Login</button> <span className='text-mainRed'></span> <button className='button bg-mainRed' onClick={()=>navigate("/signup")}>Register</button></div>)}
         <button  onClick={()=> setOpen(!open)}>
           <FontAwesomeIcon icon={faBars} className="text-2xl cursor-pointer text-mainRed" />
         </button>
