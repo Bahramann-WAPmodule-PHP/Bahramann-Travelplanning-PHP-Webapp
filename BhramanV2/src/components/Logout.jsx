@@ -9,14 +9,8 @@ export default function Logout() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/samir/main.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          action: "logout",
-        }),
+      const response = await fetch("http://localhost/Bhramanapp/Backend/server/logout.php", {
+        method: "POST"
       });
 
       const data = await response.json();

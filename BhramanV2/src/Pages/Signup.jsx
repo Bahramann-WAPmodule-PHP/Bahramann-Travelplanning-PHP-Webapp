@@ -104,7 +104,7 @@ const handleSubmit = async () => {
     formData.append('emailAddress', emailAddress);
     formData.append('password', password);
 
-    const response = await fetch('/api/samir/main.php', {
+    const response = await fetch('http://localhost/Bhramanapp/Backend/server/signup.php', {
       method: 'POST',
       body: formData
     });
@@ -112,11 +112,24 @@ const handleSubmit = async () => {
     const data = await response.json();
 
     if (data.success) {
-      // Signup successful → redirect to login
-      navigate('/login');
+      // Signup successful → redirect to login with success message
+      navigate('/login', { 
+        state: { 
+          message: 'Registration successful! Please log in with your new account.',
+          messageType: 'success' 
+        }
+      });
     } else {
-      // Show server-side error (e.g. "User already exists")
-      setErrors(prev => ({ ...prev, general: data.error || 'Signup failed' }));
+      // Show server-side error
+      if (data.errors) {
+        // Handle multiple validation errors from backend
+        for (const [field, message] of Object.entries(data.errors)) {
+          setFieldError(field === 'email' ? 'emailAddress' : field, message);
+        }
+      } else {
+        // Show general error
+        setErrors(prev => ({ ...prev, general: data.error || 'Signup failed' }));
+      }
     }
   } catch (error) {
     console.error('Error submitting form:', error);

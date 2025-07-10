@@ -65,16 +65,14 @@ const handleSubmit = async (e) => {
   if (!validateInput()) return;
 
   try {
-    const response = await fetch("/api/main.php", {
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('rememberMe', rememberMe ? '1' : '0');
+    
+    const response = await fetch("http://localhost/Bhramanapp/Backend/server/login.php", {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: new URLSearchParams({
-        email,
-        password,
-        rememberMe: rememberMe ? "1" : "0",
-      }),
+      body: formData
     });
 
     if (!response.ok) {
