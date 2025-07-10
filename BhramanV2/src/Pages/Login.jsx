@@ -65,7 +65,7 @@ const handleSubmit = async (e) => {
   if (!validateInput()) return;
 
   try {
-    const response = await fetch("/api/samir/main.php", {
+    const response = await fetch("/api/main.php", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -131,18 +131,26 @@ const handleSubmit = async (e) => {
               )}
             </div>
 
-            <div className="mb-6">
+            <div className="mb-6 relative">
               <input
-              type={showPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 id="Password"
                 value={password}
                 onChange={(e) => handleInputChange(e, "password")}
                 placeholder="Password"
                 className={`w-full border ${
                   errors.password ? "border-red-500" : "border-gray-300"
-                } rounded px-3 py-2 focus:outline-none`}
+                } rounded px-3 py-2 pr-10 focus:outline-none`}
               />
-              <span><FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} onClick={() => setShowPassword(!showPassword)} className="text-gray-400"/></span>
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              >
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  className="text-gray-400"
+                />
+              </span>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
