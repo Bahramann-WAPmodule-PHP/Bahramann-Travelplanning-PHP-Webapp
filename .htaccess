@@ -1,0 +1,57 @@
+# Protect against XSS, clickjacking, etc.
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^(\.htaccess|\.htpasswd|\.git|\.env|config\.php)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable server signature
+ServerSignature Off
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Enable rewriting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Force HTTPS (uncomment in production)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect to API endpoints
+    RewriteRule ^api/login$ /Backend/server/login.php [L]
+    RewriteRule ^api/signup$ /Backend/server/signup.php [L]
+    RewriteRule ^api/logout$ /Backend/server/logout.php [L]
+    RewriteRule ^api/auth$ /Backend/main.php [L]
+</IfModule>
+
+# PHP settings
+<IfModule mod_php7.c>
+    # Restrict PHP information leakage
+    php_flag display_startup_errors off
+    php_flag display_errors off
+    php_flag html_errors off
+    php_value docref_root 0
+    php_value docref_ext 0
+    
+    # Disable dangerous functions
+    php_value disable_functions exec,passthru,shell_exec,system,proc_open,popen,curl_exec,curl_multi_exec,parse_ini_file,show_source
+    
+    # Cookie security
+    php_value session.cookie_httponly 1
+    php_value session.use_only_cookies 1
+    php_value session.cookie_secure 1
+</IfModule>

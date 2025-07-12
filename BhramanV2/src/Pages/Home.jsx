@@ -3,12 +3,15 @@ import bgImage from '../assets/Background/bgImage.jpg'
 import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 
 export default function Home() {
   const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn)
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  
+
 
     const destinations = [
       {
@@ -43,22 +46,23 @@ const navigate = useNavigate();
 
     const FirstSection = () => {
         return(
-                  <div className='w-full h-screen flex justify-center bg-cover bg-center'>
-        <div
-          className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl mt-5'
-          style={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}>
-          <div className="absolute inset-0 bg-black/30 z-0"></div>
-          <div>
-            <p className='text-4xl relative z-10 text-center'>Discover Nepal's Hidden Gems</p>
-            <p className='text-[18px] relative  z-10 text-center'>Experience the beauty, culture, and adventure that awaits you</p>
-          </div>
-        </div>
-      </div>
-        )
+            <div className='w-full h-[calc(100vh-75px)] flex justify-center bg-cover bg-center pt-0.1'>
+                <div
+                    className='w-9/10 h-10/12 overflow-hidden shadow-lg flex items-center justify-center text-white relative rounded-2xl'
+                    style={{
+                        backgroundImage: `url(${bgImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                >
+                    <div className="absolute inset-0 bg-black/30 z-0"></div>
+                    <div>
+                        <p className='text-4xl relative z-10 text-center'>Discover Nepal's Hidden Gems</p>
+                        <p className='text-[18px] relative z-10 text-center'>Experience the beauty, culture, and adventure that awaits you</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const PopularDestinations = () => {
@@ -67,6 +71,7 @@ const navigate = useNavigate();
           navigate('/search');
         } else {
           alert('You have to login/signup first');
+          navigate('/login');
         }
       };
 
@@ -77,7 +82,7 @@ const navigate = useNavigate();
                These are some of the most popular destinations in Nepal, each offering unique experiences and breathtaking views.
             </p>
             <div className="w-full flex flex-wrap justify-center gap-6">
-                {destinations.map((dest, idx) => (
+                {destinations.slice(0, 3).map((dest, idx) => (
                     <div key={idx} className="w-full sm:w-[300px] flex justify-center">
                         <Card {...dest} />
                     </div>
@@ -121,11 +126,46 @@ const navigate = useNavigate();
         );
     }
 
+    const Footer = () => {
+        return (
+            <footer className="bg-gray-100 py-8 px-4">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Bhraman</h3>
+                            <p className="text-gray-600">Your gateway to exploring the beauty of Nepal. Plan your next adventure with us.</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Quick Links</h3>
+                            <ul className="space-y-2">
+                                <li><a href="/" className="text-gray-600 hover:text-mainRed">Home</a></li>
+                                <li><a href="/search" className="text-gray-600 hover:text-mainRed">Destinations</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">About Us</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Contact</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 text-darkBlue">Legal</h3>
+                            <ul className="space-y-2">
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Privacy Policy</a></li>
+                                <li><a href="#" className="text-gray-600 hover:text-mainRed">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500">
+                        <p>&copy; 2025 Bhraman. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        );
+    }
+
   return (
     <div>
         <FirstSection/>
         <PopularDestinations/>
         <WhyChooseBhraman/>
+        <Footer/>
     </div>
   )
 }
