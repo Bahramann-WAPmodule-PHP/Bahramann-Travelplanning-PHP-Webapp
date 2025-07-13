@@ -3,7 +3,6 @@ import bgImage from '../assets/Background/bgImage.jpg'
 import Card from '../components/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCoins} from '@fortawesome/free-solid-svg-icons';
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 

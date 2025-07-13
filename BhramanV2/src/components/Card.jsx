@@ -1,9 +1,12 @@
 import React,{useState} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function Card({location, numerator, denominator, reviews, scene}) {
-   const renderStars = (top, bottom) => {
+  const navigate = useNavigate();
+   const renderStars = (top, bottom, size) => {
       if (bottom === 0) {
         return <p>No rating till now</p>;
       }
@@ -11,7 +14,7 @@ export default function Card({location, numerator, denominator, reviews, scene})
       const averageRating = Math.floor(top / bottom);
       const stars = [];
       for (let i = 0; i < averageRating; i++) {
-        stars.push(<FontAwesomeIcon key = {i} icon={faStar} className='text-mainYellow' />);
+        stars.push(<FontAwesomeIcon key = {i} icon={faStar} className='text-mainYellow' style={{fontSize: size}}/>);
       }
       return stars;
     };
@@ -22,13 +25,11 @@ export default function Card({location, numerator, denominator, reviews, scene})
       <div className='flex justify-between items-end'>
         <div>
           {location}
-          <div>{renderStars(numerator, denominator)}</div>
+          <div>{renderStars(numerator, denominator, "")}</div>
           <div className="text-darkBlue font-bold">{reviews} reviews</div>
         </div>
-         <button className='button bg-mainRed'>Book Now</button></div>
-         
+         <button className='button bg-mainRed' onClick={()=>navigate("/booking")}>Book Now</button></div>   
       </div>
-
     </div>
   )
 }

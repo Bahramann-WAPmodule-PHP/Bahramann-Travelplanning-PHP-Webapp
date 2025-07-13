@@ -27,6 +27,9 @@ export default function Modal({ open, setOpen }) {
             <Link to="/Search" className="links" onClick={() => setOpen(false)}>
             Search Destination
           </Link>
+          <Link to="/MyBookings" className="links" onClick={() => setOpen(false)}>
+            My Bookings
+          </Link>
           <Logout />
         </nav>
       </div>

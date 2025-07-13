@@ -1,21 +1,28 @@
 import React from 'react'
-export default function BookingCard({scene, location, room, date, price, people, hotel}) {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+export default function BookingCard({ scene, location, numerator, denominator, reviews, Description}) {
+   const renderStars = (top, bottom, size) => {
+      if (bottom === 0) {
+        return <p>No rating till now</p>;
+      }
+  
+      const averageRating = Math.floor(top / bottom);
+      const stars = [];
+      for (let i = 0; i < averageRating; i++) {
+        stars.push(<FontAwesomeIcon key = {i} icon={faStar} className='text-mainYellow' style={{fontSize: size}}/>);
+      }
+      return stars;
+    };
   return (
-    <div className='w-9/10  bg-white shadow-lg rounded-lg p-4 flex justify-between'>
-      <div className='flex gap-[10px]'>
-      <img src= {scene} alt="" className='h-[200px] rounded-2xl'/>
-        <div>
-    <p className='font-bold text-2xl text-darkBlue'>{location}</p>
-    <p className='text-darkBlue font-bold'>{hotel}</p>
-    <p className='text-gray-400'>{date}</p>
-    <p className='text-gray-400'>{room} room {people} adults</p>
-      </div>
-        </div>
-      <div className='text-right'>
-        <p className='font-bold text-2xl'>Rs.{price}</p>
-        <p>{"fully paid"}</p>
-      </div>
+    <div className='w-9/10 bg-white shadow-lg rounded-lg p-4 h-7/10 flex gap-5'>
+      <img src={scene} alt={location} className='w-6/10 h-full rounded-2xl' />
+    <div>
+        <h1 className='text-4xl font-bold'>{location}</h1>
+      <div>{renderStars(numerator, denominator, "1.5rem")} <span className='text-darkBlue font-bold text-2xl'>{reviews} Reviews</span></div>
+    <p className='text-gray-500 mt-2'>{Description}</p>
+</div>
 
     </div>
-  )
+  );
 }

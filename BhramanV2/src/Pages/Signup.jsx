@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { apiRoute } from "../utils/apiRoute";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -104,12 +105,14 @@ const handleSubmit = async () => {
     formData.append('emailAddress', emailAddress);
     formData.append('password', password);
 
-    const response = await fetch('http://localhost/Bhramanapp/Backend/server/auth/signup.php', {
+    const response = await fetch(apiRoute.signup, {
       method: 'POST',
       body: formData
     });
 
     const data = await response.json();
+
+     console.log('Signup response:', data);
 
     if (data.success) {
       // Signup successful → redirect to login with success message
@@ -129,11 +132,13 @@ const handleSubmit = async () => {
       } else {
         // Show general error
         setErrors(prev => ({ ...prev, general: data.error || 'Signup failed' }));
+        console.log(data.error);
       }
     }
   } catch (error) {
     console.error('Error submitting form:', error);
     setErrors(prev => ({ ...prev, general: 'Network error occurred' }));
+    console.log('Network error:', error);
   }
 };
 

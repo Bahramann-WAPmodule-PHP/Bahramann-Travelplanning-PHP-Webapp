@@ -9,12 +9,12 @@ export default function SearchLocation() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/api/samir/get_locations.php")
+    fetch("/api/bhramanapp/Backend/get_locations.php")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           setLocations(data.data);
-          setFilteredLocations(data.data); // default view = all
+          setFilteredLocations(data.data);
         } else {
           setError("Failed to fetch locations");
         }

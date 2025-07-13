@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setLoggedIn} from '../redux/feature/LoginSlice';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { apiRoute } from "../utils/apiRoute";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -70,7 +71,7 @@ const handleSubmit = async (e) => {
     formData.append('password', password);
     formData.append('rememberMe', rememberMe ? '1' : '0');
     
-    const response = await fetch("http://localhost/Bhramanapp/Backend/server/auth/login.php", {
+    const response = await fetch(apiRoute.login, {
       method: "POST",
       body: formData
     });
@@ -96,6 +97,7 @@ const handleSubmit = async (e) => {
   } catch (error) {
     console.error(error);
     setFieldError("general", "Network error. Please try again.");
+    console.error("Login error:", error);
   }
 };
 
