@@ -4,6 +4,14 @@ import scene from '../assets/Background/bgImage.jpg';
 import CommentCard from '../components/CommentCard.jsx';
 
 export default function Booking() {
+const hotelOptions = [
+  { value: "" },
+  { value: "Mountain View Resort" },
+  { value: "Beachside Hotel" },
+  { value: "City Center Hotel" },
+  { value: "Hilltop Hotel" },
+  { value: "Luxury Hotel" }
+];
   const fakeBookingData = {
     scene: scene,
     location: 'New York City',
@@ -11,6 +19,7 @@ export default function Booking() {
     numerator: 4,
     denominator: 1,
     reviews: 100,
+    hotelOptions: hotelOptions
   };
 
   return (

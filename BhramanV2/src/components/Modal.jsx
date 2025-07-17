@@ -9,7 +9,7 @@ export default function Modal({ open, setOpen }) {
     <div>
       <div
         className={
-          'fixed inset-0 justify-self-end flex flex-col items-start bg-white h-[100vh] z-50 w-1/2 md:w-2/10 sm:w-3/10 shadow-lg transition-transform duration-300 ' +
+          'fixed inset-0 justify-self-end flex flex-col items-start bg-white h-[100vh] z-50  w-7/10 md:w-2/10 sm:w-3/10 shadow-lg transition-transform duration-300 ' +
           (open ? 'translate-x-0' : 'translate-x-full')
         }
       >
