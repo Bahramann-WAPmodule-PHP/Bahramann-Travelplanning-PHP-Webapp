@@ -4,7 +4,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 
-export default function Card({location, numerator, denominator, reviews, scene}) {
+export default function Card({id, location, numerator, denominator, reviews, scene}) {
   const navigate = useNavigate();
    const renderStars = (top, bottom, size) => {
       if (bottom === 0) {
@@ -28,7 +28,7 @@ export default function Card({location, numerator, denominator, reviews, scene})
           <div>{renderStars(numerator, denominator, "")}</div>
           <div className="text-darkBlue font-bold">{reviews} reviews</div>
         </div>
-         <button className='button bg-mainRed' onClick={()=>navigate("/booking")}>Book Now</button></div>   
+         <button className='button bg-mainRed' onClick={()=>navigate(`/booking/${id}`)}>Book Now</button></div>   
       </div>
     </div>
   )

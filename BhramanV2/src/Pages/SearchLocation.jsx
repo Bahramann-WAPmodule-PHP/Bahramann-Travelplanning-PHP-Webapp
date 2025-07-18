@@ -54,6 +54,7 @@ export default function SearchLocation() {
           filteredLocations.map((loc) => (
             <Card
               key={loc.id}
+              id={loc.id}
               location={loc.title}
               numerator={loc.total_rating}
               denominator={loc.num_ratings}

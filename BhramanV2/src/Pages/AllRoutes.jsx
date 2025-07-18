@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLoggedIn } from "../redux/feature/LoginSlice";
 import Home from "./Home.jsx";
@@ -10,6 +10,7 @@ import { apiRoute } from "../utils/apiRoute.js";
 import Booking from "./Booking.jsx";
 export default function AppRoutes() {
   const [open, setOpen] = useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function AppRoutes() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<SearchLocation />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/booking/:id" element={<Booking />} />
         </Routes>
       </div>
     </>

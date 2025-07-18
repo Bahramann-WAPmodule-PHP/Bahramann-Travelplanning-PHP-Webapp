@@ -16,7 +16,7 @@ if ($mysqli->connect_errno) {
     exit;
 }
 
-$stmt = $mysqli->prepare("SELECT * FROM locations WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT * FROM locations WHERE location_id = ?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
 
