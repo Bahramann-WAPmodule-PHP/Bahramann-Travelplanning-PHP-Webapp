@@ -13,7 +13,7 @@ try {
     $id = intval($_GET['id']);
 
     // Query the location table from your schema
-    $stmt = $pdo->prepare("SELECT location_id, location_name, total_rating, number_of_ratings, description, image_url, hotel_id, vehicle_type FROM location WHERE location_id = ?");
+    $stmt = $pdo->prepare("SELECT location_id, location_name, total_rating, number_of_ratings, description, image_url, vehicle_type FROM location WHERE location_id = ?");
     $stmt->execute([$id]);
     
     $location = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,7 +32,6 @@ try {
         'total_rating' => $location['total_rating'],
         'num_ratings' => $location['number_of_ratings'],
         'description' => $location['description'],
-        'hotel_id' => $location['hotel_id'],
         'vehicle_type' => $location['vehicle_type']
     ];
 
