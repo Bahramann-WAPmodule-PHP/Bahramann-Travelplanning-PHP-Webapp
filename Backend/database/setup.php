@@ -1,4 +1,3 @@
-
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -70,17 +69,19 @@ try {
     echo "<p>Table 'booking' created or already exists.</p>";
     
     $sql = "
-    CREATE TABLE IF NOT EXISTS comment (
-        comment_id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
+    CREATE TABLE IF NOT EXISTS comments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
         location_id INT NOT NULL,
+        name VARCHAR(100) NOT NULL,
         comment TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        likes INT DEFAULT 0,
+        dislikes INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (location_id) REFERENCES location(location_id)
     )";
     
     $conn->exec($sql);
-    echo "<p>Table 'comment' created or already exists.</p>";
+    echo "<p>Table 'comments' created or already exists.</p>";
     
     if (isset($_GET['sample'])) {
         

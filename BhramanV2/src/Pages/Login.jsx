@@ -84,6 +84,7 @@ const handleSubmit = async (e) => {
 
     if (data.success) {
       dispatch(setLoggedIn(true)); // Update Redux state
+      localStorage.setItem('user', JSON.stringify(data.data));
       navigate("/");
     } else {
       if (data.error.includes("email")) {
