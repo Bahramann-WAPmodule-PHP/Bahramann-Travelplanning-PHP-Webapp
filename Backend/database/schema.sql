@@ -8,6 +8,7 @@ CREATE TABLE users (
     username VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    remember_token VARCHAR(255),
     session_token VARCHAR(255),   
     session_expiry TIMESTAMP     
 );

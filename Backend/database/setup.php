@@ -1,3 +1,4 @@
+
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -7,7 +8,7 @@ error_reporting(E_ALL);
 $host = 'localhost';
 $username = 'root';
 $password = '';
-$dbname = 'bhramanv2';
+$dbname = 'bhraman';
 
 echo "<h1>Setting up Database</h1>";
 
@@ -29,6 +30,7 @@ try {
         username VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        remember_token VARCHAR(255) NULL,
         session_token VARCHAR(255) NULL,
         session_expiry TIMESTAMP NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

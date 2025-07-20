@@ -1,57 +1,41 @@
 <?php
-require '../../config/db.php';
+require '../../config/common_api.php';
 
-#Set headers for CORS and JSON responses
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
-header('Content-Type: application/json');
+// Wrap everything in try-catch to ensure JSON output
+try {
+    require '../../db.php';
 
-#session start
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+    $post = $_POST;
 
-#remember me cookie handling
-if (isset($_COOKIE['remember_me'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($post['action']) && $post['action'] === 'logout') {
+        session_unset();
+        session_destroy();
 
-    list($selector, $validator) = explode(':', $_COOKIE['remember_me']);
-    
-    #Remove from database
-    if (!empty($selector) && isset($_SESSION['user_id'])) {
-        try {
-            $stmt = $conn->prepare("UPDATE users SET session_token = NULL, session_expiry = NULL WHERE user_id = ?");
-            $stmt->execute([$_SESSION['user_id']]);
-        } catch (PDOException $e) {
-            error_log("Logout error: " . $e->getMessage());
+        // Only clear remember_token if the column exists
+        if (isset($_COOKIE['remember_token'])) {
+            try {
+                $token = $_COOKIE['remember_token'];
+                $stmt = $pdo->prepare("UPDATE users SET remember_token = NULL WHERE remember_token = ?");
+                $stmt->execute([$token]);
+            } catch (PDOException $e) {
+                // If remember_token column doesn't exist, just log the error but continue
+                error_log('Remember token column not found: ' . $e->getMessage());
+            }
         }
+
+        setcookie('remember_token', '', time() - 3600, "/", "", false, true);
+
+        echo json_encode(['success' => true]);
+        exit;
     }
-    
-    #Clear the cookie
-    setcookie('remember_me', '', time() - 3600, '/', '', isset($_SERVER['HTTPS']), true);
+
+    // Invalid request
+    echo json_encode(['success' => false, 'error' => 'Invalid request']);
+    exit;
+
+} catch (Exception $e) {
+    // Log the error and return JSON
+    error_log('Logout Error: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'error' => 'Server error occurred']);
+    exit;
 }
-
-#Clear session data
-$_SESSION = [];
-
-#If a session cookie exists, delete it
-if (ini_get("session.use_cookies")) {
-    $params = session_get_cookie_params();
-    setcookie(
-        session_name(),
-        '',
-        time() - 3600,
-        $params["path"],
-        $params["domain"],
-        $params["secure"],
-        $params["httponly"]
-    );
-}
-session_destroy();
-
-#Return success response
-echo json_encode([
-    'success' => true,
-    'message' => 'Logged out successfully'
-]);
-?>

@@ -1,73 +1,46 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-#If it's not a POST request, return error
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'error' => 'Invalid request method']);
-    exit;
-}
-
-require '../../config/db.php';
-
-#sanitize data and get user data
-$firstName = filter_input(INPUT_POST, 'firstName', FILTER_SANITIZE_STRING);
-$lastName = filter_input(INPUT_POST, 'lastName', FILTER_SANITIZE_STRING);
-$email = filter_input(INPUT_POST, 'emailAddress', FILTER_SANITIZE_EMAIL);
-$password = $_POST['password'] ?? ''; // We'll hash this, not sanitize
-
-#Validate inputs
-$errors = [];
-
-if (empty($firstName)) {
-    $errors['firstName'] = 'First name is required';
-}
-
-if (empty($lastName)) {
-    $errors['lastName'] = 'Last name is required';
-}
-
-if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors['emailAddress'] = 'Valid email address is required';
-}
-
-if (empty($password) || strlen($password) < 6) {
-    $errors['password'] = 'Password must be at least 6 characters';
-}
-
-if (!empty($errors)) {
-    echo json_encode(['success' => false, 'errors' => $errors]);
-    exit;
-}
-
+require '../../config/common_api.php';
+// Wrap everything in try-catch to ensure JSON output
 try {
-    #Check if user already exists
-    $stmt = $conn->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
-    $stmt->execute([$email]);
-    $userExists = (bool) $stmt->fetchColumn();
+    require_once '../../config/db.php';
 
-    if ($userExists) {
-        echo json_encode(['success' => false, 'errors' => ['emailAddress' => 'User with this email already exists']]);
-        exit;
+    function getUserByEmail($pdo, $email) {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    #Hash the password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    function createUser($pdo, $firstName, $lastName, $email, $password) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $username = $firstName . ' ' . $lastName; // Combine first and last name
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        return $stmt->execute([$username, $email, $hash]);
+    }
 
-    #Insert the new user
-    $stmt = $conn->prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
-    $username = $firstName . ' ' . $lastName; // Combine for username
-    $stmt->execute([$username, $email, $hashedPassword]);
+    $post = $_POST;
 
-    #Return success response
-    echo json_encode([
-        'success' => true, 
-        'message' => 'Registration successful!'
-    ]);
+    if (isset($post['firstName'], $post['lastName'], $post['emailAddress'], $post['password'])) {
+        $email = trim($post['emailAddress']);
+        
+        if (getUserByEmail($pdo, $email)) {
+            echo json_encode(['success' => false, 'error' => 'User already exists with this email']);
+            exit;
+        }
+        
+        if (createUser($pdo, $post['firstName'], $post['lastName'], $email, $post['password'])) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Signup failed']);
+        }
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Invalid request']);
+        exit;
+    }
     
-} catch (PDOException $e) {
+} catch (Exception $e) {
+    // Log the error and return JSON
     error_log('Signup Error: ' . $e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'An error occurred during registration']);
+    echo json_encode(['success' => false, 'error' => 'Server error occurred']);
+    exit;
 }

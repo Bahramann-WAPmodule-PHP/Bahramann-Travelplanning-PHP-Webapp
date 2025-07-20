@@ -1,18 +1,13 @@
 <?php
-$host = 'localhost';
-$dbname = 'bhramanv2';
-$username = 'root';
-$password = '';
+
+$dsn = 'mysql:host=localhost;dbname=bhraman;charset=utf8mb4';
+$user = 'root';
+$pass = '';
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    error_log("Database connection failed: " . $e->getMessage());
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'error' => 'Database connection error']);
+    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);
     exit;
 }
-?>
