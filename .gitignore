@@ -1,2 +1,139 @@
+<<<<<<< HEAD
 /Backend/uploads/
 
+=======
+# PHP
+*.log
+*.sql
+*.sqlite
+vendor/
+composer.phar
+composer.lock
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+
+# Laravel specific (if using Laravel in future)
+/bootstrap/compiled.php
+/app/storage/
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+
+# CodeIgniter specific
+*/config/development
+*/logs/log-*.php
+*/logs/!index.html
+*/cache/*
+*/cache/!index.html
+*/cache/!.htaccess
+
+# WordPress (if applicable)
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+wp-content/cache/supercache/
+wp-content/cache/object-cache.php
+
+# XAMPP/Server specific
+.htaccess
+*.lock
+
+# Database
+*.sql
+*.sqlite
+*.db
+
+# Node.js (for React frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# React Build
+BhramanV2/dist/
+BhramanV2/build/
+BhramanV2/.env
+BhramanV2/.env.local
+BhramanV2/.env.development.local
+BhramanV2/.env.test.local
+BhramanV2/.env.production.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# PHP-specific temporary files
+*.php~
+*.phps
+*.phtml~
+
+# Upload directories (keep structure but ignore files)
+Backend/uploads/*
+!Backend/uploads/.gitkeep
+
+# Config files with sensitive data
+Backend/config/database.php
+Backend/config/secrets.php
+Backend/config/local.php
+
+# Session files
+sess_*
+
+# Cache directories
+cache/
+tmp/
+temp/
+
+# Build artifacts
+*.min.js
+*.min.css
+
+# Package managers
+composer.lock
+package-lock.json
+yarn.lock
+
+# Development tools
+.phpunit.result.cache
+phpunit.xml
+.phpcs.xml
+.php_cs.cache
+.php-cs-fixer.cache
+>>>>>>> 431f0872ef25bc258487d319ae4304185a9d3fb9

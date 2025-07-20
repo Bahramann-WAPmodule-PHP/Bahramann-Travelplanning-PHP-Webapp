@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLoggedIn} from '../redux/feature/LoginSlice';
+import { setLoggedIn, setUser} from '../redux/feature/LoginSlice';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import { apiRoute } from "../utils/apiRoute";
@@ -73,6 +73,7 @@ const handleSubmit = async (e) => {
     
     const response = await fetch(apiRoute.login, {
       method: "POST",
+      credentials: 'include', // Include cookies for remember me
       body: formData
     });
 
@@ -84,7 +85,28 @@ const handleSubmit = async (e) => {
 
     if (data.success) {
       dispatch(setLoggedIn(true)); // Update Redux state
+<<<<<<< HEAD
       localStorage.setItem('user', JSON.stringify(data.data));
+=======
+      
+      // Fetch user data
+      try {
+        const userResponse = await fetch(apiRoute.getUser, {
+          method: "GET",
+          credentials: "include"
+        });
+        
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.success) {
+            dispatch(setUser(userData.user));
+          }
+        }
+      } catch (userError) {
+        console.error("Failed to fetch user data:", userError);
+      }
+      
+>>>>>>> 431f0872ef25bc258487d319ae4304185a9d3fb9
       navigate("/");
     } else {
       if (data.error.includes("email")) {

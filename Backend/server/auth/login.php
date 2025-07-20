@@ -1,7 +1,9 @@
 <?php
 require '../../config/common_api.php';
+
+
 // Wrap everything in try-catch to ensure JSON output
-try {
+try { 
     require '../../config/db.php';
 
 function getUserByEmail($pdo, $email) {
@@ -36,6 +38,7 @@ if (isset($post['email'], $post['password'])) {
         if (isset($post['rememberMe']) && $post['rememberMe'] === '1') {
             $token = bin2hex(random_bytes(32));
             setRememberToken($pdo, $user['user_id'], $token);
+            // Set cookie for local development
             setcookie('remember_token', $token, time() + (86400 * 30), "/", "", false, true);
         } else {
             setRememberToken($pdo, $user['user_id'], null);
