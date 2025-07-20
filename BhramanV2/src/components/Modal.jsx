@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faUser} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import Logout from './Logout'
 
@@ -30,7 +30,13 @@ export default function Modal({ open, setOpen }) {
           <Link to="/MyBookings" className="links" onClick={() => setOpen(false)}>
             My Bookings
           </Link>
-          <Logout />
+                    <button className="flex m-3 items-center gap-2 border border-gray-300 p-2 rounded-lg cursor-pointer">
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        className="text-mainRed p-2 bg-white shadow-md rounded-full shadow-black/50"
+                      />
+                      Profile
+                    </button>
         </nav>
       </div>
     </div>

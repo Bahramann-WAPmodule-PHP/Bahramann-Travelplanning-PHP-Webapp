@@ -44,13 +44,13 @@ export default function BookingCard({
   };
 
   return (
-    <div className="w-9/10 bg-white shadow-lg rounded-lg p-4 h-7/10 flex gap-5">
+    <div className="w-9/10 bg-white shadow-lg rounded-lg p-4 h-7/10 flex flex-col sm:flex-row gap-5">
       <img
-        src={`/api/samir/${image_path}`}
+        src={`/api/bhramanapp/backend/${image_path}`}
         alt={title}
-        className="w-6/10 rounded-2xl"
+        className="w-full sm:w-6/10 h-full rounded-2xl object-cover"
       />
-      <div className="relative">
+      <div className="w-full sm:w-4/10">
         <h1 className="text-4xl font-bold">{title}</h1>
         <div>
           {renderStars(total_rating, num_ratings, "1.5rem")}{" "}
@@ -108,10 +108,9 @@ export default function BookingCard({
             Date: <span className="font-bold">{date}</span>
           </div>
         </div>
-
-        <button className="button bg-mainRed absolute bottom-1 right-1 text-2xl">
-          Confirm
-        </button>
+        <div className="w-full flex justify-end">
+          <button className="button bg-mainRed mt-2 text-2xl">Confirm</button>
+        </div>
       </div>
     </div>
   );

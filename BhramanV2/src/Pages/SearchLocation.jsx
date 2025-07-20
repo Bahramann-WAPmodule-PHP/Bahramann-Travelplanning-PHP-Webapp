@@ -59,7 +59,7 @@ export default function SearchLocation() {
               numerator={loc.total_rating}
               denominator={loc.num_ratings}
               reviews={loc.num_ratings}
-              scene={`/api/samir/${loc.image_path}`}
+              scene={`/api/bhramanapp/backend/${loc.image_path}`}
             />
           ))
         ) : (

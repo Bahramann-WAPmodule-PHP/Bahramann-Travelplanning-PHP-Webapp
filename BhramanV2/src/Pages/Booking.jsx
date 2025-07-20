@@ -47,6 +47,9 @@ export default function Booking() {
         </button>
       </div>
       <CommentCard name="John Doe" comment="Great experience!" likes="10" dislikes="2" />
+      <CommentCard name="John Doe" comment="Great experience!" likes="10" dislikes="2" />
+      <CommentCard name="John Doe" comment="Great experience!" likes="10" dislikes="2" />
+
     </div>
   );
 }
