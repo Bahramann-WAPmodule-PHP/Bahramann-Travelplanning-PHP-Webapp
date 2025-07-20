@@ -13,40 +13,31 @@ CREATE TABLE users (
     session_expiry TIMESTAMP     
 );
 
--- 3. Create hotel table (this should come before location table)
-CREATE TABLE hotel (
-    hotel_id INT AUTO_INCREMENT PRIMARY KEY,
-    hotel_name VARCHAR(100) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    number_of_rooms INT NOT NULL
-);
-
--- 4. Create location table (related to hotel)
+-- 3. Create location table
 CREATE TABLE location (
     location_id INT AUTO_INCREMENT PRIMARY KEY,
     location_name VARCHAR(100) NOT NULL,
     total_rating INT NOT NULL,
     number_of_ratings INT NOT NULL,
     description TEXT,
+    hotel_name VARCHAR(100) NOT NULL,
     image_url VARCHAR(255) NOT NULL,
-    hotel_id INT NOT NULL,
-    vehicle_type VARCHAR(50) NOT NULL,
-    FOREIGN KEY (hotel_id) REFERENCES hotel(hotel_id)
+    vehicle_type VARCHAR(50) NOT NULL
 );
 
--- 5. Create booking table (linked to users, hotel)
+-- 4. Create booking table (linked to users)
 CREATE TABLE booking (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    hotel_id INT NOT NULL,
+    location_id INT NOT NULL,
     vehicle_type VARCHAR(50),
-    number_of_rooms INT NOT NULL,
+    number_of_people INT NOT NULL,
     booking_date DATE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (hotel_id) REFERENCES hotel(hotel_id)
+    FOREIGN KEY (location_id) REFERENCES location(location_id)
 );
 
--- 6. Create comment table (linked to users and location table)
+-- 5. Create comment table (linked to users and location table)
 CREATE TABLE comment (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,

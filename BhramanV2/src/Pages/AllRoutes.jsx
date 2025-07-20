@@ -19,7 +19,7 @@ export default function AppRoutes() {
       try {
         const response = await fetch(apiRoute.getUser, {
           method: "GET",
-          credentials: "include",
+          credentials: "include", // Include cookies for remember me
           headers: {
             Accept: "application/json",
           },

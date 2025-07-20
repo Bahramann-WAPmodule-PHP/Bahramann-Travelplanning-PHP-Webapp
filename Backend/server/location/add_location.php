@@ -12,15 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sanitize and validate input
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
-        $hotel_id = intval($_POST['hotel_id'] ?? 0);
+        $hotel_name = trim($_POST['hotel_name'] ?? '');
         $vehicle_type = trim($_POST['vehicle_type'] ?? 'Car');
         $initial_rating = intval($_POST['initial_rating'] ?? 0);
 
         // Validation
-        if (empty($title) || empty($description)) {
-            $response = ['success' => false, 'error' => 'Location name and description are required'];
-        } elseif ($hotel_id <= 0) {
-            $response = ['success' => false, 'error' => 'Please provide a valid hotel ID'];
+        if (empty($title) || empty($description) || empty($hotel_name)) {
+            $response = ['success' => false, 'error' => 'Location name, description, and hotel name are required'];
         } elseif (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $response = ['success' => false, 'error' => 'Please upload a valid image'];
         } else {
@@ -49,15 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $number_of_ratings = ($initial_rating > 0) ? 1 : 0;
                     $total_rating = $initial_rating;
                     
-                    $stmt = $pdo->prepare("INSERT INTO location (location_name, total_rating, number_of_ratings, description, image_url, hotel_id, vehicle_type) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $pdo->prepare("INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_name, image_url, vehicle_type) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     
                     $success = $stmt->execute([
                         $title,
                         $total_rating,
                         $number_of_ratings,
                         $description,
+                        $hotel_name,
                         $imagePath,
-                        $hotel_id,
                         $vehicle_type
                     ]);
                     
@@ -77,10 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (PDOException $e) {
         error_log('Database error in add_location: ' . $e->getMessage());
-        $response = ['success' => false, 'error' => 'Database error occurred. Please try again'];
+        // Temporarily show the actual error for debugging
+        $response = ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
     } catch (Exception $e) {
         error_log('General error in add_location: ' . $e->getMessage());
-        $response = ['success' => false, 'error' => 'An unexpected error occurred. Please try again'];
+        $response = ['success' => false, 'error' => 'An unexpected error occurred: ' . $e->getMessage()];
     }
 }
 ?>
@@ -207,9 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-group">
-                <label for="hotel_id">Hotel ID <span class="required">*</span></label>
-                <input type="number" name="hotel_id" id="hotel_id" min="1" required />
-                <div class="help-text">Enter the ID of the hotel associated with this location</div>
+                <label for="hotel_name">Hotel/Accommodation Name <span class="required">*</span></label>
+                <input type="text" name="hotel_name" id="hotel_name" required placeholder="e.g., Mountain View Resort, City Center Hotel" />
             </div>
 
             <div class="form-group">
