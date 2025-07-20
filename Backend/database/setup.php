@@ -88,7 +88,6 @@ try {
         user_id INT NOT NULL,
         location_id INT NOT NULL,
         comment TEXT NOT NULL,
-        comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(user_id),
         FOREIGN KEY (location_id) REFERENCES location(location_id)
     )";
