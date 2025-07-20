@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BookingCard from '../components/BookingCard.jsx';
 import CommentCard from '../components/CommentCard.jsx';
 import { useParams } from 'react-router-dom';
+import { apiRoute } from '../utils/apiRoute.js';
 
 export default function Booking() {
   const { id } = useParams();
@@ -17,7 +18,7 @@ export default function Booking() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/bhramanapp/Backend/get_locationDetail.php?id=${id}`);
+        const response = await fetch(`${apiRoute.getLocationDetail}?id=${id}`);
         if (!response.ok) throw new Error('Failed to fetch location details');
         const data = await response.json();
         console.log(data);

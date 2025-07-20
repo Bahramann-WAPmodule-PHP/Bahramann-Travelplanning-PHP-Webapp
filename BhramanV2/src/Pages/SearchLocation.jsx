@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "../components/Card";
+import { apiRoute } from "../utils/apiRoute";
 
 export default function SearchLocation() {
   const [locations, setLocations] = useState([]);
@@ -9,17 +10,25 @@ export default function SearchLocation() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/api/bhramanapp/Backend/get_locations.php")
-      .then((res) => res.json())
+    console.log('Fetching locations from:', apiRoute.getLocations);
+    fetch(apiRoute.getLocations)
+      .then((res) => {
+        console.log('Response status:', res.status);
+        return res.json();
+      })
       .then((data) => {
+        console.log('Response data:', data);
         if (data.success) {
           setLocations(data.data);
           setFilteredLocations(data.data);
         } else {
-          setError("Failed to fetch locations");
+          setError(data.error || "Failed to fetch locations");
         }
       })
-      .catch(() => setError("Error fetching data"))
+      .catch((err) => {
+        console.error('Fetch error:', err);
+        setError("Error fetching data");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -59,7 +68,7 @@ export default function SearchLocation() {
               numerator={loc.total_rating}
               denominator={loc.num_ratings}
               reviews={loc.num_ratings}
-              scene={`/api/bhramanapp/backend/${loc.image_path}`}
+              scene={`http://localhost/Bhramanapp/Backend/${loc.image_path}`}
             />
           ))
         ) : (
