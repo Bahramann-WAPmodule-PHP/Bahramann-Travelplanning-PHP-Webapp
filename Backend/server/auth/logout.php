@@ -3,7 +3,7 @@ require '../../config/common_api.php';
 
 // Wrap everything in try-catch to ensure JSON output
 try {
-    require '../../db.php';
+    require '../../config/db.php';
 
     $post = $_POST;
 
