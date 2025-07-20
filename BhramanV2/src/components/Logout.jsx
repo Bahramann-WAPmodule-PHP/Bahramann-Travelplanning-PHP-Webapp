@@ -12,6 +12,7 @@ const handleLogout = async () => {
   try {
     const response = await fetch(apiRoute.logout, {
       method: "POST",
+      credentials: 'include', // Include cookies for logout
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

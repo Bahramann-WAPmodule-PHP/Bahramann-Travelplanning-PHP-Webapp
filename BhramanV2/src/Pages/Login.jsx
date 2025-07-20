@@ -73,6 +73,7 @@ const handleSubmit = async (e) => {
     
     const response = await fetch(apiRoute.login, {
       method: "POST",
+      credentials: 'include', // Include cookies for remember me
       body: formData
     });
 

@@ -18,6 +18,7 @@ export default function AppRoutes() {
       try {
         const response = await fetch(apiRoute.login, {
           method: "GET",
+          credentials: 'include', // Include cookies for remember me
           headers: {
             Accept: "application/json",
           },
