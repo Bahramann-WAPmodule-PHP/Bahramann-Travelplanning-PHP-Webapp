@@ -85,9 +85,7 @@ const handleSubmit = async (e) => {
 
     if (data.success) {
       dispatch(setLoggedIn(true)); // Update Redux state
-<<<<<<< HEAD
       localStorage.setItem('user', JSON.stringify(data.data));
-=======
       
       // Fetch user data
       try {
@@ -106,7 +104,6 @@ const handleSubmit = async (e) => {
         console.error("Failed to fetch user data:", userError);
       }
       
->>>>>>> 431f0872ef25bc258487d319ae4304185a9d3fb9
       navigate("/");
     } else {
       if (data.error.includes("email")) {

@@ -20,9 +20,10 @@ CREATE TABLE location (
     total_rating INT NOT NULL,
     number_of_ratings INT NOT NULL,
     description TEXT,
-    hotel_name VARCHAR(100) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    vehicle_type VARCHAR(50) NOT NULL
+    hotel_names TEXT NOT NULL,
+    hotel_prices TEXT NOT NULL,
+    vehicle_type TEXT,
+    image_url VARCHAR(255) NOT NULL
 );
 
 -- 4. Create booking table (linked to users)

@@ -12,13 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sanitize and validate input
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
-        $hotel_name = trim($_POST['hotel_name'] ?? '');
-        $vehicle_type = trim($_POST['vehicle_type'] ?? 'Car');
+        $hotel_names = trim($_POST['hotel_names'] ?? '');
+        $hotel_prices = trim($_POST['hotel_prices'] ?? '');
+        $vehicle_type = trim($_POST['vehicle_type'] ?? '');
         $initial_rating = intval($_POST['initial_rating'] ?? 0);
 
         // Validation
-        if (empty($title) || empty($description) || empty($hotel_name)) {
-            $response = ['success' => false, 'error' => 'Location name, description, and hotel name are required'];
+        if (empty($title) || empty($description) || empty($hotel_names) || empty($hotel_prices) || empty($vehicle_type)) {
+            $response = ['success' => false, 'error' => 'Location name, description, hotel names, hotel prices, and vehicle types are required'];
         } elseif (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $response = ['success' => false, 'error' => 'Please upload a valid image'];
         } else {
@@ -47,16 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $number_of_ratings = ($initial_rating > 0) ? 1 : 0;
                     $total_rating = $initial_rating;
                     
-                    $stmt = $pdo->prepare("INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_name, image_url, vehicle_type) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $pdo->prepare("INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_names, hotel_prices, vehicle_type, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                     
                     $success = $stmt->execute([
                         $title,
                         $total_rating,
                         $number_of_ratings,
                         $description,
-                        $hotel_name,
-                        $imagePath,
-                        $vehicle_type
+                        $hotel_names,
+                        $hotel_prices,
+                        $vehicle_type,
+                        $imagePath
                     ]);
                     
                     if ($success) {
@@ -206,21 +208,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-group">
-                <label for="hotel_name">Hotel/Accommodation Name <span class="required">*</span></label>
-                <input type="text" name="hotel_name" id="hotel_name" required placeholder="e.g., Mountain View Resort, City Center Hotel" />
+                <label for="hotel_names">Hotel Names (comma-separated) <span class="required">*</span></label>
+                <textarea name="hotel_names" id="hotel_names" required placeholder="e.g., Mountain View Resort, City Center Hotel, Alpine Lodge"></textarea>
+                <div class="help-text">Enter multiple hotel names separated by commas</div>
             </div>
 
             <div class="form-group">
-                <label for="vehicle_type">Recommended Transportation</label>
-                <select name="vehicle_type" id="vehicle_type">
-                    <option value="Car">Car/Taxi</option>
-                    <option value="Bus">Bus</option>
-                    <option value="Train">Train</option>
-                    <option value="Flight">Flight</option>
-                    <option value="Bike">Bike/Motorcycle</option>
-                    <option value="Walking">Walking</option>
-                    <option value="Boat">Boat</option>
-                </select>
+                <label for="hotel_prices">Hotel Prices (comma-separated) <span class="required">*</span></label>
+                <textarea name="hotel_prices" id="hotel_prices" required placeholder="e.g., Rs.5000, Rs.3500, Rs.4200"></textarea>
+                <div class="help-text">Enter prices corresponding to each hotel, separated by commas (same order as hotel names)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="vehicle_type">Vehicle Types (comma-separated) <span class="required">*</span></label>
+                <textarea name="vehicle_type" id="vehicle_type" required placeholder="e.g., Car, Bus, Bike, SUV"></textarea>
+                <div class="help-text">Enter available vehicle types separated by commas</div>
             </div>
 
             <div class="form-group">

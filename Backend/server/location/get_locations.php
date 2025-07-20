@@ -4,7 +4,7 @@ require_once '../../config/db.php';
 
 try {
     // Query the location table from your schema
-    $sql = "SELECT location_id, location_name, total_rating, number_of_ratings, description, image_url, hotel_name, vehicle_type FROM location ORDER BY location_id DESC";
+    $sql = "SELECT location_id, location_name, total_rating, number_of_ratings, description, image_url, hotel_names, hotel_prices, vehicle_type FROM location ORDER BY location_id DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     
@@ -17,7 +17,8 @@ try {
             'total_rating' => $row['total_rating'],
             'num_ratings' => $row['number_of_ratings'],
             'description' => $row['description'],
-            'hotel_name' => $row['hotel_name'],
+            'hotel_names' => $row['hotel_names'],
+            'hotel_prices' => $row['hotel_prices'],
             'vehicle_type' => $row['vehicle_type']
         ];
         $locations[] = $location;

@@ -3,7 +3,22 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Database configuration
+//        if (!$locationExists) {
+            #Add sample location
+            $stmt = $conn->prepare("
+                INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_names, hotel_prices, image_url) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                'Himalayan Viewpoint', 
+                45, 
+                10, 
+                'Beautiful mountain views with fresh air and hiking trails.',
+                'Mountain Lodge Resort,Himalayan Paradise Hotel,Summit View Lodge,Alpine Retreat Center',
+                'Rs.5000,Rs.3500,Rs.4200,Rs.6000',
+                'uploads/img_687b0d53928890.93497605.png'
+            ]);
+            echo "<p>Added sample location</p>";uration
 $host = 'localhost';
 $username = 'root';
 $password = '';
@@ -45,9 +60,10 @@ try {
         total_rating INT NOT NULL,
         number_of_ratings INT NOT NULL,
         description TEXT,
-        hotel_name VARCHAR(100) NOT NULL,
-        image_url VARCHAR(255) NOT NULL,
-        vehicle_type VARCHAR(50) NOT NULL
+        hotel_names TEXT NOT NULL,
+        hotel_prices TEXT NOT NULL,
+        vehicle_type TEXT,
+        image_url VARCHAR(255) NOT NULL
     )";
     
     $conn->exec($sql);
@@ -110,17 +126,18 @@ try {
         if (!$locationExists) {
             #Add sample location
             $stmt = $conn->prepare("
-                INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_name, image_url, vehicle_type) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_names, hotel_prices, vehicle_type, image_url) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 'Himalayan Viewpoint', 
                 45, 
                 10, 
                 'Beautiful mountain views with fresh air and hiking trails.',
-                'Mountain Lodge Resort',
-                'uploads/img_687b0d53928890.93497605.png',
-                'Car'
+                'Mountain Lodge Resort,Himalayan Paradise Hotel,Summit View Lodge,Alpine Retreat Center',
+                'Rs.5000,Rs.3500,Rs.4200,Rs.6000',
+                'Car,Bus,Bike,SUV',
+                'uploads/img_687b0d53928890.93497605.png'
             ]);
             echo "<p>Added sample location</p>";
         } else {
