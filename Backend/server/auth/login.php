@@ -1,7 +1,9 @@
 <?php
 require '../../config/common_api.php';
+
+
 // Wrap everything in try-catch to ensure JSON output
-try {
+try { 
     require '../../config/db.php';
 
 function getUserByEmail($pdo, $email) {

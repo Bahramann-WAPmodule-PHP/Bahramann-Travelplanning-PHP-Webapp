@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLoggedIn} from '../redux/feature/LoginSlice';
+import { setLoggedIn, setUser} from '../redux/feature/LoginSlice';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import { apiRoute } from "../utils/apiRoute";
@@ -84,6 +84,24 @@ const handleSubmit = async (e) => {
 
     if (data.success) {
       dispatch(setLoggedIn(true)); // Update Redux state
+      
+      // Fetch user data
+      try {
+        const userResponse = await fetch(apiRoute.getUser, {
+          method: "GET",
+          credentials: "include"
+        });
+        
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.success) {
+            dispatch(setUser(userData.user));
+          }
+        }
+      } catch (userError) {
+        console.error("Failed to fetch user data:", userError);
+      }
+      
       navigate("/");
     } else {
       if (data.error.includes("email")) {
