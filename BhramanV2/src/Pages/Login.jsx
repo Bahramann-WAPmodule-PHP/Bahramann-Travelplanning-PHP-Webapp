@@ -104,7 +104,11 @@ const handleSubmit = async (e) => {
         console.error("Failed to fetch user data:", userError);
       }
       
-      navigate("/");
+      if (data.data && data.data.is_admin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } else {
       if (data.error.includes("email")) {
         setFieldError("email", data.error);

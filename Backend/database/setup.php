@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// ...existing code...
+
 $host = 'localhost';
 $username = 'root';
 $password = '';
@@ -29,6 +29,7 @@ try {
         username VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        is_admin TINYINT(1) DEFAULT 0,
         remember_token VARCHAR(255) NULL,
         session_token VARCHAR(255) NULL,
         session_expiry TIMESTAMP NULL,
@@ -37,6 +38,8 @@ try {
     
     $conn->exec($sql);
     echo "<p>Table 'users' created or already exists.</p>";
+    // Ensure is_admin column exists (for upgrades)
+    $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin TINYINT(1) DEFAULT 0");
     
     $sql = "
     CREATE TABLE IF NOT EXISTS location (
@@ -127,6 +130,22 @@ try {
             echo "<p>Added sample location</p>";
         } else {
             echo "<p>Sample location already exists</p>";
+        }
+        
+        # Add sample admin user
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+        $stmt->execute(['admin@example.com']);
+        $adminExists = (int)$stmt->fetchColumn() > 0;
+        if (!$adminExists) {
+            $passwordHash = password_hash('adminpassword', PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("
+                INSERT INTO users (username, email, password, is_admin) 
+                VALUES (?, ?, ?, 1)
+            ");
+            $stmt->execute(['Admin', 'admin@admin.com', $passwordHash]);
+            echo "<p>Added admin user: admin@admin.com / admin123</p>";
+        } else {
+            echo "<p>Admin user already exists</p>";
         }
     }
     

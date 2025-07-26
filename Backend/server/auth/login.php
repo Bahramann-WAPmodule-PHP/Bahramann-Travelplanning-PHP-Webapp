@@ -45,7 +45,15 @@ if (isset($post['email'], $post['password'])) {
             setcookie('remember_token', '', time() - 3600, "/", "", false, true);
         }
 
-        echo json_encode(['success' => true]);
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'user_id' => $user['user_id'],
+                'email' => $user['email'],
+                'username' => $user['username'],
+                'is_admin' => isset($user['is_admin']) ? intval($user['is_admin']) : 0
+            ]
+        ]);
         exit;
     } catch (PDOException $e) {
         error_log('Login Error: ' . $e->getMessage());
