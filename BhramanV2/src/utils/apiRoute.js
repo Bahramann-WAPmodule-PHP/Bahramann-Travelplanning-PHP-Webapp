@@ -8,6 +8,4 @@ export const apiRoute = {
     addLocation: 'http://localhost/Bhramanapp/Backend/server/location/add_location.php',
     addComment: 'http://localhost/Bhramanapp/Backend/server/Comment/add_comment.php',
     getComments: 'http://localhost/Bhramanapp/Backend/server/Comment/get_comment.php',
-    
-    // getHotels: 'http://localhost/Bhramanapp/Backend/server/hotel/get_hotels.php',
 };

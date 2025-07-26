@@ -3,22 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-//        if (!$locationExists) {
-            #Add sample location
-            $stmt = $conn->prepare("
-                INSERT INTO location (location_name, total_rating, number_of_ratings, description, hotel_names, hotel_prices, image_url) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([
-                'Himalayan Viewpoint', 
-                45, 
-                10, 
-                'Beautiful mountain views with fresh air and hiking trails.',
-                'Mountain Lodge Resort,Himalayan Paradise Hotel,Summit View Lodge,Alpine Retreat Center',
-                'Rs.5000,Rs.3500,Rs.4200,Rs.6000',
-                'uploads/img_687b0d53928890.93497605.png'
-            ]);
-            echo "<p>Added sample location</p>";uration
+// ...existing code...
 $host = 'localhost';
 $username = 'root';
 $password = '';
