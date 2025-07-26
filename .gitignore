@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/Backend/uploads/
-
-=======
 # PHP
 *.log
 *.sql
@@ -136,4 +132,3 @@ phpunit.xml
 .phpcs.xml
 .php_cs.cache
 .php-cs-fixer.cache
->>>>>>> 431f0872ef25bc258487d319ae4304185a9d3fb9
