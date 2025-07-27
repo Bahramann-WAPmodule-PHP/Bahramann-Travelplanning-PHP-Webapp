@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { apiRoute } from "../utils/apiRoute";
+import whiteLogo from "../assets/logo/white 1.png";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -149,8 +150,9 @@ const handleSubmit = async () => {
   return (
     <div className='w-screen h-screen flex items-center justify-center bg-gray-100'>
       <div className='flex w-9/12 h-9/12 rounded-lg shadow-xl overflow-hidden'>
-        <div className='bg-mainRed shadow-lg flex text-white w-5/10 items-center justify-center text-2xl font-bold'>
-          Logo
+        <div className='bg-mainRed shadow-lg flex flex-col text-white w-5/10 items-center justify-center text-2xl font-bold'>
+          <img src={whiteLogo} alt="Bhraman Logo" className="w-30 h-24 mb-4" />
+          <p className="text-lg italic font-normal">Your official travel partner</p>
         </div>
         <div className="bg-white p-4 w-5/10 flex flex-col justify-center">
                   <h2 className="text-xl font-semibold text-center mb-4">Signup</h2>
