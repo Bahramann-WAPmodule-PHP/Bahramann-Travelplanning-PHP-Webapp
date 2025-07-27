@@ -26,33 +26,35 @@ export default function AdminDashboard() {
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">All Locations</h2>
-          <LocationTable />
+        {/* Quick Navigation Flex Boxes */}
+        <div className="flex flex-col md:flex-row gap-6 mb-10">
+          <div
+            className="flex-1 bg-gradient-to-br from-mainRed to-pink-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => navigate('/admin/users')}
+          >
+            <span className="text-4xl mb-2 text-white"><i className="fas fa-users"></i></span>
+            <h2 className="text-2xl font-semibold text-white mb-1">Users</h2>
+            <p className="text-white text-center">Manage all users, admins, and perform CRUD operations.</p>
+          </div>
+          <div
+            className="flex-1 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => document.getElementById('locations-table').scrollIntoView({ behavior: 'smooth' })}
+          >
+            <span className="text-4xl mb-2 text-white"><i className="fas fa-map-marked-alt"></i></span>
+            <h2 className="text-2xl font-semibold text-white mb-1">Locations</h2>
+            <p className="text-white text-center">View, add, and manage all travel locations.</p>
+          </div>
+          <div
+            className="flex-1 bg-gradient-to-br from-green-500 to-emerald-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => document.getElementById('bookings-table').scrollIntoView({ behavior: 'smooth' })}
+          >
+            <span className="text-4xl mb-2 text-white"><i className="fas fa-calendar-check"></i></span>
+            <h2 className="text-2xl font-semibold text-white mb-1">Bookings</h2>
+            <p className="text-white text-center">Review and manage all bookings made by users.</p>
+          </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">Add Location</h2>
-          <AddLocation onSuccess={() => window.location.reload()} />
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">All Users</h2>
-          <UserTable />
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">All Bookings</h2>
-          {/* TODO: Table of bookings with delete buttons */}
-          <p>Bookings table goes here.</p>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">All Comments</h2>
-          {/* TODO: Table of comments with delete buttons */}
-          <p>Comments table goes here.</p>
-        </div>
-        {/* The logout button is now in the navbar profile dropdown */}
+        {/* Only the flex box navigation remains as requested */}
       </div>
     </>
   );

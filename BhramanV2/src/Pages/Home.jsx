@@ -14,7 +14,6 @@ export default function Home() {
 
     const destinations = [
       {
-        id: 1,
         location: "Pokhara",
         numerator: 45,
         denominator: 10,
@@ -22,7 +21,6 @@ export default function Home() {
         scene: bgImage
       },
       {
-        id: 2,
         location: "Kathmandu",
         numerator: 38,
         denominator: 8,
@@ -30,17 +28,15 @@ export default function Home() {
         scene: bgImage
       },
       {
-        id: 3,
         location: "Chitwan",
         numerator: 50,
         denominator: 12,
         reviews: 150,
         scene: bgImage
       },
-      {
-        id: 4,
+        {
         location: "Lumbini",
-        numerator: 45,
+        numerator: 45  ,
         denominator: 12,
         reviews: 150,
         scene: bgImage
