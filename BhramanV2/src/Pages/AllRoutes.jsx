@@ -12,6 +12,7 @@ import Booking from "./Booking.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
 import AdminUsers from "./AdminUsers.jsx";
 import AdminBookings from "./AdminBookings.jsx";
+import AdminLocations from "./AdminLocations.jsx";
 
 export default function AppRoutes() {
   const [open, setOpen] = useState(false);
@@ -58,6 +59,7 @@ export default function AppRoutes() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/locations" element={<AdminLocations />} />
         </Routes>
       </div>
     </>

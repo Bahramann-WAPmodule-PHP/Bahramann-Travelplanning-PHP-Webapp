@@ -39,7 +39,7 @@ export default function AdminDashboard() {
           </div>
           <div
             className="flex-1 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
-            onClick={() => document.getElementById('locations-table').scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => navigate('/admin/locations')}
           >
             <span className="text-4xl mb-2 text-white"><i className="fas fa-map-marked-alt"></i></span>
             <h2 className="text-2xl font-semibold text-white mb-1">Locations</h2>
