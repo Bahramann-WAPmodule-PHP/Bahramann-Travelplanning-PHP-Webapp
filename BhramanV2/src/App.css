@@ -50,3 +50,19 @@ body{
       @apply text-mainRed font-semibold text-lg p-3 hover:bg-black/10 transition-colors duration-300  ease-in-out md:hover:rounded-lg;
     }
 }
+
+/* Success popup animation */
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%) translateX(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) translateX(-50%);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
