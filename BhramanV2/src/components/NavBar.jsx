@@ -14,6 +14,7 @@ export default function NavBar({ open, setOpen }) {
   const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn);
   const user = useSelector((state) => state.LoginSlice.user);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const profileDropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -28,6 +29,11 @@ export default function NavBar({ open, setOpen }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+    setShowProfileDropdown(false);
+  };
 
   const handleLogout = async () => {
     try {
@@ -44,13 +50,17 @@ export default function NavBar({ open, setOpen }) {
       if (data.success) {
         dispatch(logout());
         navigate("/login");
-        setShowProfileDropdown(false);
+        setShowLogoutConfirm(false);
       } else {
         console.error("Logout failed:", data);
       }
     } catch (err) {
       console.error("Logout error:", err);
     }
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   return (
@@ -104,7 +114,7 @@ export default function NavBar({ open, setOpen }) {
                 
                 <div className="p-2">
                   <button
-                    onClick={handleLogout}
+                    onClick={handleLogoutClick}
                     className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-red-50 rounded-md text-red-600 font-medium transition-colors"
                   >
                     <FontAwesomeIcon icon={faSignOutAlt} />
@@ -153,6 +163,33 @@ export default function NavBar({ open, setOpen }) {
           </div>)}
         </div>
       </div>
+
+      {/* Logout Confirmation Popup */}
+      {showLogoutConfirm && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-2xl border border-gray-200">
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-6">
+                Are you sure want to sign out?
+              </h3>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={cancelLogout}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
