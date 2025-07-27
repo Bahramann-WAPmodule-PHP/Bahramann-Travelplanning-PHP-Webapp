@@ -90,36 +90,57 @@ export default function Booking() {
   };
 
   if (!bookingData) {
-    return <div>Loading location details...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainRed mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading location details...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className='w-full flex flex-col justify-center items-center gap-2'>
+    <div className='w-full flex flex-col justify-center items-center gap-4 p-4'>
       <BookingCard {...bookingData} hotelOptions={hotelOptions} vehicleOptions={vehicleOptions} />
-      <div className='w-9/10 bg-white shadow-lg rounded-lg p-4 h-7/10 flex flex-col gap-5'>
+      
+      <div className='w-9/10 bg-white shadow-lg rounded-lg p-6 flex flex-col gap-4 transition-all duration-200 hover:shadow-xl'>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Share Your Experience</h3>
         <textarea
-          placeholder="Write a review..."
+          placeholder="Write a review about this location..."
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
-          className="rounded-lg p-4 h-20 resize-none border border-gray-300"
+          className="rounded-lg p-4 h-24 resize-none border border-gray-300 focus:border-mainRed focus:ring-2 focus:ring-mainRed focus:ring-opacity-20 transition-all duration-200 outline-none"
         />
-        <button onClick={handleSubmit} className="bg-mainRed text-white px-4 py-2 rounded-lg self-end">
+        <button 
+          onClick={handleSubmit} 
+          disabled={!commentText.trim()}
+          className="bg-mainRed text-white px-6 py-2 rounded-lg self-end hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
+        >
           Submit Review
         </button>
       </div>
-      <div className="w-full flex flex-col gap-3 items-center">
+      
+      <div className="w-full flex flex-col gap-4 items-center">
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">Customer Reviews</h3>
         {comments.length === 0 ? (
-          <p className="text-gray-500">No reviews yet. Be the first to comment!</p>
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-lg">No reviews yet.</p>
+            <p className="text-gray-400">Be the first to share your experience!</p>
+          </div>
         ) : (
-          comments.map((comment, index) => (
-            <CommentCard
-              key={index}
-              name={comment.name}
-              comment={comment.comment}
-              likes={comment.likes || 0}
-              dislikes={comment.dislikes || 0}
-            />
-          ))
+          <>
+            <p className="text-sm text-gray-600 mb-4">{comments.length} review{comments.length !== 1 ? 's' : ''}</p>
+            {comments.map((comment, index) => (
+              <CommentCard
+                key={index}
+                name={comment.name}
+                comment={comment.comment}
+                likes={comment.likes || 0}
+                dislikes={comment.dislikes || 0}
+              />
+            ))}
+          </>
         )}
       </div>
     </div>

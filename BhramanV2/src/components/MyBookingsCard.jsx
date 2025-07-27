@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faEdit, faTrashAlt, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { apiRoute } from '../utils/apiRoute';
 
 export default function MyBookingsCard({scene, location, hotel, date, people, price, bookingId, locationId, onBookingDeleted}) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -33,13 +34,14 @@ export default function MyBookingsCard({scene, location, hotel, date, people, pr
     navigate(`/booking/${locationId}?edit=${bookingId}`);
   };
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this booking?')) {
-      return;
-    }
-
-    setIsDeleting(true);
+  const handleDelete = () => {
     setShowDropdown(false);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowConfirmModal(false);
+    setIsDeleting(true);
 
     try {
       const response = await fetch(apiRoute.manageBookings, {
@@ -57,11 +59,12 @@ export default function MyBookingsCard({scene, location, hotel, date, people, pr
       const data = await response.json();
       
       if (data.success) {
-        // Call parent component to refresh the bookings list
-        if (onBookingDeleted) {
-          onBookingDeleted(bookingId);
-        }
-        alert('Booking deleted successfully!');
+        // Call parent component to refresh bookings list and show popup
+        setTimeout(() => {
+          if (onBookingDeleted) {
+            onBookingDeleted(bookingId);
+          }
+        }, 100); // Small delay to ensure smooth transition
       } else {
         alert('Failed to delete booking: ' + (data.error || 'Unknown error'));
       }
@@ -71,6 +74,10 @@ export default function MyBookingsCard({scene, location, hotel, date, people, pr
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowConfirmModal(false);
   };
 
   const getImageUrl = (imageUrl) => {
@@ -122,7 +129,7 @@ export default function MyBookingsCard({scene, location, hotel, date, people, pr
       <div className='flex flex-col items-end'>
         <div className='text-right mb-2'>
           <p className='font-bold text-xl text-gray-800'>Rs. {formatPrice(price)}</p>
-          <p className='text-green-600 text-sm font-medium'>Fully paid</p>
+          <p className='text-red-400 text-sm font-medium'>Payment pending</p>
         </div>
         <div className='relative' ref={dropdownRef}>
           <button 
@@ -154,6 +161,33 @@ export default function MyBookingsCard({scene, location, hotel, date, people, pr
           )}
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-2xl border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Delete Booking</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete this booking? This action cannot be undone.</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import { apiRoute } from '../utils/apiRoute';
 import MyBookingsCard from '../components/MyBookingsCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faExclamationTriangle, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 export default function MyBooking() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn);
 
   useEffect(() => {
@@ -19,6 +20,16 @@ export default function MyBooking() {
       fetchBookings();
     }
   }, [isLoggedIn]);
+
+  // Auto-hide delete popup after 3 seconds
+  useEffect(() => {
+    if (showDeletePopup) {
+      const timer = setTimeout(() => {
+        setShowDeletePopup(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showDeletePopup]);
 
   const fetchBookings = async () => {
     try {
@@ -68,6 +79,8 @@ export default function MyBooking() {
   };
 
   const handleBookingDeleted = (deletedBookingId) => {
+    // Show the delete success popup
+    setShowDeletePopup(true);
     // Remove the deleted booking from the state
     setBookings(prevBookings => 
       prevBookings.filter(booking => booking.booking_id !== deletedBookingId)
@@ -168,6 +181,16 @@ export default function MyBooking() {
           </div>
         )}
       </div>
+
+      {/* Delete Success Popup */}
+      {showDeletePopup && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-slide-down">
+            <FontAwesomeIcon icon={faCheck} className="text-xl" />
+            <span className="font-semibold text-lg">Your bookings is deleted.</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

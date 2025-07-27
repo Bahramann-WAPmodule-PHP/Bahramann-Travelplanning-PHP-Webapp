@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import { apiRoute } from "../utils/apiRoute";
+import { faStar, faCheck } from "@fortawesome/free-solid-svg-icons";
 import RateModal from "./RateModal.jsx";
+import { apiRoute } from "../utils/apiRoute.js";
 
 export default function BookingCard({
   id,
@@ -21,9 +20,17 @@ export default function BookingCard({
   const [date, setDate] = useState("");
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
-  const [isBooking, setIsBooking] = useState(false);
-  
-  const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  // Auto-hide success popup after 3 seconds
+  useEffect(() => {
+    if (showSuccessPopup) {
+      const timer = setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessPopup]);
 
   const handleHotelChange = (e) => {
     const selectedHotel = e.target.value;
@@ -33,11 +40,6 @@ export default function BookingCard({
   };
 
   const handleSubmit = async () => {
-    if (!isLoggedIn) {
-      alert("Please log in to make a booking.");
-      return;
-    }
-
     if (!hotel || !vehicle || !date || numberOfPeople < 1) {
       alert("Please fill all booking details.");
       return;
@@ -49,11 +51,9 @@ export default function BookingCard({
     today.setHours(0, 0, 0, 0);
     
     if (bookingDate < today) {
-      alert("Booking date cannot be in the past.");
+      alert("Booking date must be today or in the future.");
       return;
     }
-
-    setIsBooking(true);
 
     const bookingData = {
       location_id: id,
@@ -67,15 +67,15 @@ export default function BookingCard({
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify(bookingData),
         credentials: "include",
       });
 
       const result = await response.json();
-      
       if (result.success) {
-        alert("Booking created successfully!");
+        setShowSuccessPopup(true);
         // Reset form
         setHotel("");
         setVehicle("");
@@ -83,13 +83,11 @@ export default function BookingCard({
         setDate("");
         setNumberOfPeople(1);
       } else {
-        alert("Booking failed: " + (result.error || "Unknown error"));
+        alert("Booking failed: " + (result.error || result.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Error:", error);
       alert("Error creating booking. Please try again.");
-    } finally {
-      setIsBooking(false);
     }
   };
 
@@ -147,6 +145,17 @@ export default function BookingCard({
         </select>
 
         <label>
+          Select start Date:
+          <input
+            type="date"
+            className="w-full border border-gray-300 p-2 rounded-md mb-2"
+            value={date}
+            min={new Date().toISOString().split('T')[0]}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </label>
+
+        <label>
           Number of People:
           <input
             type="number"
@@ -158,45 +167,42 @@ export default function BookingCard({
           />
         </label>
 
-        <label>
-          Select Booking Date:
-          <input
-            type="date"
-            className="w-full border border-gray-300 p-2 rounded-md mb-2"
-            value={date}
-            min={new Date().toISOString().split('T')[0]}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </label>
-
         <div className="border border-gray-300 p-2 rounded-md flex items-center">
           <div className="w-1/2">
             Hotel: <span className="font-bold">{hotel}</span><br />
             Vehicle: <span className="font-bold">{vehicle}</span><br />
-            People: <span className="font-bold">{numberOfPeople}</span><br />
-            Date: <span className="font-bold">{date}</span>
+            Date: <span className="font-bold">{date}</span><br />
+            People: <span className="font-bold">{numberOfPeople}</span>
           </div>
           <div className="w-1/2">
             Price: <span className="font-bold">{selectedPrice || 'N/A'}</span><br />
             Total: <span className="font-bold">
-              {selectedPrice && numberOfPeople ? `Rs. ${(parseFloat(selectedPrice) * numberOfPeople).toLocaleString()}` : 'N/A'}
+              {selectedPrice && numberOfPeople ? `Rs. ${(parseFloat(selectedPrice.replace(/[^\d.]/g, '')) * numberOfPeople).toLocaleString()}` : 'N/A'}
             </span>
           </div>
         </div>
 
-        <div className="w-full flex justify-end gap-2">
-          <button className="button bg-mainRed mt-2 text-2xl" onClick={() => setIsRateModalOpen(true)}>Rate</button>
-          <button 
-            className="button bg-mainRed mt-2 text-2xl disabled:opacity-50 disabled:cursor-not-allowed" 
-            onClick={handleSubmit}
-            disabled={isBooking || !isLoggedIn}
-          >
-            {isBooking ? 'Booking...' : 'Confirm'}
+        <div className="w-full flex justify-end gap-4 mt-6">
+          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200" onClick={() => setIsRateModalOpen(true)}>
+            Rate
+          </button>
+          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200" onClick={handleSubmit}>
+            Confirm
           </button>
         </div>
 
         <RateModal isOpen={isRateModalOpen} setIsOpen={setIsRateModalOpen} onSubmit={submitRating} />
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-slide-down">
+            <FontAwesomeIcon icon={faCheck} className="text-xl" />
+            <span className="font-semibold text-lg">Hotel has been booked.</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
