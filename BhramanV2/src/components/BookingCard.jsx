@@ -25,6 +25,7 @@ export default function BookingCard({
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showRatingSuccessPopup, setShowRatingSuccessPopup] = useState(false);
 
   // Auto-hide success popup after 3 seconds
   useEffect(() => {
@@ -35,6 +36,16 @@ export default function BookingCard({
       return () => clearTimeout(timer);
     }
   }, [showSuccessPopup]);
+
+  // Auto-hide rating success popup after 3 seconds
+  useEffect(() => {
+    if (showRatingSuccessPopup) {
+      const timer = setTimeout(() => {
+        setShowRatingSuccessPopup(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showRatingSuccessPopup]);
 
   // Populate form when editing
   useEffect(() => {
@@ -123,17 +134,38 @@ export default function BookingCard({
 
   const submitRating = async (rating) => {
     try {
-      const res = await fetch("http://localhost/Bhramanapp/Backend/server/location/add_rating.php", {
+      const res = await fetch(apiRoute.addRating, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ location_id: id, rating }),
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ 
+          location_id: id, 
+          rating: rating 
+        }),
+        credentials: "include",
       });
 
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const result = await res.json();
-      alert(result.success ? "Thank you for rating!" : "Rating failed: " + result.error);
+      
+      if (result.success) {
+        setShowRatingSuccessPopup(true);
+        setIsRateModalOpen(false);
+        // Optionally refresh the page or update the rating display after popup shows
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      } else {
+        alert("Rating failed: " + (result.error || result.message || "Unknown error"));
+      }
     } catch (err) {
-      alert("Error submitting rating");
-      console.error(err);
+      console.error("Rating submission error:", err);
+      alert("Error submitting rating. Please try again.");
     }
   };
 
@@ -155,8 +187,8 @@ export default function BookingCard({
       <div className="w-full sm:w-4/10">
         <h1 className="text-4xl font-bold">{title}</h1>
         <div className="flex items-center gap-2">
-          {renderStars(total_rating, num_ratings, "1.5rem")}
-          <span className="text-darkBlue font-bold text-2xl">{num_ratings + numReviews} Rating and Review{num_ratings + numReviews === 1 ? "" : "s"}</span>
+          {renderStars(total_rating, num_ratings, "1rem")}
+          <span className="text-darkBlue font-bold text-1xl">{num_ratings + numReviews} Rating and Review{num_ratings + numReviews === 1 ? "" : "s"}</span>
         </div>
         <p className="text-gray-500 mt-2 text-justify">{description}</p>
 
@@ -232,6 +264,16 @@ export default function BookingCard({
             <span className="font-semibold text-lg">
               {isEditing ? 'Booking has been updated.' : 'Hotel has been booked.'}
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* Rating Success Popup */}
+      {showRatingSuccessPopup && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-slide-down">
+
+            <span className="font-semibold text-lg">Thank you for rating!</span>
           </div>
         </div>
       )}

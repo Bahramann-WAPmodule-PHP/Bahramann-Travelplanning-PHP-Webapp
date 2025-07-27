@@ -8,6 +8,7 @@ export const apiRoute = {
     addLocation: 'http://localhost/Bhramanapp/Backend/server/location/add_location.php',
     editLocation: 'http://localhost/Bhramanapp/Backend/server/location/edit_location.php',
     deleteLocation: 'http://localhost/Bhramanapp/Backend/server/location/delete_location.php',
+    addRating: 'http://localhost/Bhramanapp/Backend/server/location/add_rating.php',
     addComment: 'http://localhost/Bhramanapp/Backend/server/Comment/add_comment.php',
     getComments: 'http://localhost/Bhramanapp/Backend/server/Comment/get_comment.php',
     manageBookings: 'http://localhost/Bhramanapp/Backend/server/booking/manage_bookings.php',
