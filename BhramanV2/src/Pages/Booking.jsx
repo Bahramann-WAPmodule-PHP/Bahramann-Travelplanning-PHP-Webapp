@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BookingCard from '../components/BookingCard.jsx';
 import CommentCard from '../components/CommentCard.jsx';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { apiRoute } from '../utils/apiRoute.js';
 import { useSelector } from 'react-redux';
 import RateModal from '../components/RateModal.jsx';
@@ -9,12 +9,15 @@ import RateModal from '../components/RateModal.jsx';
 
 export default function Booking() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const editBookingId = searchParams.get('edit');
   const [bookingData, setBookingData] = useState(null);
   const [hotelOptions, setHotelOptions] = useState([]);
   const [vehicleOptions, setVehicleOptions] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
-    const user = useSelector((state) => state.LoginSlice.user);
+  const [existingBookingData, setExistingBookingData] = useState(null);
+  const user = useSelector((state) => state.LoginSlice.user);
   
 
   useEffect(() => {
@@ -47,6 +50,22 @@ export default function Booking() {
       }
     };
 
+    const fetchExistingBooking = async () => {
+      if (!editBookingId) return;
+      
+      try {
+        const response = await fetch(`${apiRoute.manageBookings}?booking_id=${editBookingId}`, {
+          credentials: 'include'
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+          setExistingBookingData(result.data);
+        }
+      } catch (error) {
+        console.error('Fetch error (existing booking):', error);
+      }
+    };
+
     const fetchComments = async () => {
       try {
         const response = await fetch(`${apiRoute.getComments}?location_id=${id}`);
@@ -60,8 +79,9 @@ export default function Booking() {
     };
 
     fetchData();
+    fetchExistingBooking();
     fetchComments();
-  }, [id]);
+  }, [id, editBookingId]);
 
   const handleSubmit = async () => {
     if (!commentText.trim()) return;
@@ -102,7 +122,14 @@ export default function Booking() {
 
   return (
     <div className='w-full flex flex-col justify-center items-center gap-4 p-4'>
-      <BookingCard {...bookingData} hotelOptions={hotelOptions} vehicleOptions={vehicleOptions} />
+      <BookingCard 
+        {...bookingData} 
+        hotelOptions={hotelOptions} 
+        vehicleOptions={vehicleOptions}
+        isEditing={!!editBookingId}
+        editBookingId={editBookingId}
+        existingBookingData={existingBookingData}
+      />
       
       <div className='w-9/10 bg-white shadow-lg rounded-lg p-6 flex flex-col gap-4 transition-all duration-200 hover:shadow-xl'>
         <h3 className="text-lg font-semibold text-gray-800 mb-2">Share Your Experience</h3>
