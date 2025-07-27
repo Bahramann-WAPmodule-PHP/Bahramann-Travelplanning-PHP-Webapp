@@ -13,6 +13,10 @@ export default function BookingCard({
   num_ratings,
   hotelOptions,
   vehicleOptions,
+  isEditing = false,
+  editBookingId = null,
+  existingBookingData = null,
+  numReviews
 }) {
   const [hotel, setHotel] = useState("");
   const [vehicle, setVehicle] = useState("");
@@ -32,6 +36,26 @@ export default function BookingCard({
     }
   }, [showSuccessPopup]);
 
+  // Populate form when editing
+  useEffect(() => {
+    if (isEditing && existingBookingData) {
+      setVehicle(existingBookingData.vehicle_type || "");
+      setNumberOfPeople(existingBookingData.number_of_people || 1);
+      setDate(existingBookingData.booking_date || "");
+      
+      // Set hotel based on existing data - find matching hotel
+      if (existingBookingData.hotel_name && hotelOptions.length > 0) {
+        const matchingHotel = hotelOptions.find(hotel => 
+          hotel.value.toLowerCase().includes(existingBookingData.hotel_name.toLowerCase())
+        );
+        if (matchingHotel) {
+          setHotel(matchingHotel.value);
+          setSelectedPrice(matchingHotel.price);
+        }
+      }
+    }
+  }, [isEditing, existingBookingData, hotelOptions]);
+
   const handleHotelChange = (e) => {
     const selectedHotel = e.target.value;
     setHotel(selectedHotel);
@@ -45,7 +69,6 @@ export default function BookingCard({
       return;
     }
 
-    // Validate booking date (should be today or in future)
     const bookingDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -56,15 +79,21 @@ export default function BookingCard({
     }
 
     const bookingData = {
-      location_id: id,
       vehicle_type: vehicle,
       number_of_people: numberOfPeople,
       booking_date: date,
     };
 
+    // Add location_id for new bookings, booking_id for updates
+    if (isEditing) {
+      bookingData.booking_id = editBookingId;
+    } else {
+      bookingData.location_id = id;
+    }
+
     try {
       const response = await fetch(apiRoute.manageBookings, {
-        method: "POST",
+        method: isEditing ? "PUT" : "POST",
         headers: { 
           "Content-Type": "application/json",
           "Accept": "application/json"
@@ -76,18 +105,19 @@ export default function BookingCard({
       const result = await response.json();
       if (result.success) {
         setShowSuccessPopup(true);
-        // Reset form
-        setHotel("");
-        setVehicle("");
-        setSelectedPrice("");
-        setDate("");
-        setNumberOfPeople(1);
+        if (!isEditing) {
+          setHotel("");
+          setVehicle("");
+          setSelectedPrice("");
+          setDate("");
+          setNumberOfPeople(1);
+        }
       } else {
-        alert("Booking failed: " + (result.error || result.message || "Unknown error"));
+        alert((isEditing ? "Update" : "Booking") + " failed: " + (result.error || result.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error creating booking. Please try again.");
+      alert("Error " + (isEditing ? "updating" : "creating") + " booking. Please try again.");
     }
   };
 
@@ -126,7 +156,7 @@ export default function BookingCard({
         <h1 className="text-4xl font-bold">{title}</h1>
         <div className="flex items-center gap-2">
           {renderStars(total_rating, num_ratings, "1.5rem")}
-          <span className="text-darkBlue font-bold text-2xl">{num_ratings} Reviews</span>
+          <span className="text-darkBlue font-bold text-2xl">{num_ratings + numReviews} Rating and Review{num_ratings + numReviews === 1 ? "" : "s"}</span>
         </div>
         <p className="text-gray-500 mt-2 text-justify">{description}</p>
 
@@ -183,11 +213,11 @@ export default function BookingCard({
         </div>
 
         <div className="w-full flex justify-end gap-4 mt-6">
-          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200" onClick={() => setIsRateModalOpen(true)}>
+          <button className="bg-mainRed button text-white font-semibold py-3 px-6 text-lg transition-colors duration-200" onClick={() => setIsRateModalOpen(true)}>
             Rate
           </button>
-          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200" onClick={handleSubmit}>
-            Confirm
+          <button className="button bg-mainRed text-white font-semibold py-3 px-8 text-lg transition-colors duration-200" onClick={handleSubmit}>
+            {isEditing ? 'Update Booking' : 'Confirm'}
           </button>
         </div>
 
@@ -199,7 +229,9 @@ export default function BookingCard({
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-slide-down">
             <FontAwesomeIcon icon={faCheck} className="text-xl" />
-            <span className="font-semibold text-lg">Hotel has been booked.</span>
+            <span className="font-semibold text-lg">
+              {isEditing ? 'Booking has been updated.' : 'Hotel has been booked.'}
+            </span>
           </div>
         </div>
       )}

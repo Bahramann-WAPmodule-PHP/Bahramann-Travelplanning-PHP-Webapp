@@ -16,7 +16,6 @@ export default function MyBooking() {
     if (isLoggedIn) {
       fetchBookings();
     } else {
-      // Try to fetch anyway to get proper error message
       fetchBookings();
     }
   }, [isLoggedIn]);
@@ -79,9 +78,7 @@ export default function MyBooking() {
   };
 
   const handleBookingDeleted = (deletedBookingId) => {
-    // Show the delete success popup
     setShowDeletePopup(true);
-    // Remove the deleted booking from the state
     setBookings(prevBookings => 
       prevBookings.filter(booking => booking.booking_id !== deletedBookingId)
     );

@@ -10,12 +10,6 @@ export default function CommentCard({name, comment, likes, dislikes}) {
       <p>
         {comment}
       </p>
-      <div className='text-darkBlue font-bold flex items-center gap-2 text-[1rem]'>
-        <FontAwesomeIcon icon={faThumbsUp} className='text-gray-400 text-[1.5rem]'/>
-        {likes}
-        <FontAwesomeIcon icon={faThumbsDown} className='text-gray-400 text-[1.5rem]' />
-        {dislikes}
-      </div>
     </div>
   )
 }

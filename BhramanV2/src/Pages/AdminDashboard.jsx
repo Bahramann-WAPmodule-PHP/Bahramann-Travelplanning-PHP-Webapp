@@ -1,18 +1,39 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faMapMarkedAlt, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 import AdminNavBar from '../components/AdminNavBar';
-import LocationTable from '../components/LocationTable';
-import AddLocation from '../components/AddLocation';
-import UserTable from '../components/UserTable';
-import BookingTable from '../components/BookingTable';
+
+// DashboardCard with group hover to switch bg and text colors
+const DashboardCard = ({ icon, title, description, onClick }) => (
+  <div
+    onClick={onClick}
+    className="group flex-1 min-w-[250px] bg-white rounded-2xl shadow-lg p-8 
+               flex flex-col items-center justify-center cursor-pointer 
+               transition-colors duration-300 ease-in-out
+               hover:bg-mainRed"
+  >
+    <div className="p-4 rounded-full mb-4
+                    group-hover:bg-white/20">
+      <FontAwesomeIcon
+        icon={icon}
+        className="text-5xl text-mainRed group-hover:text-white transition-colors duration-300"
+      />
+    </div>
+    <h2 className="text-2xl font-bold text-mainRed group-hover:text-white mb-2 transition-colors duration-300">
+      {title}
+    </h2>
+    <p className="text-center text-mainRed group-hover:text-white transition-colors duration-300">
+      {description}
+    </p>
+  </div>
+);
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
 
-  useEffect(() => {
-    // Check if admin is logged in (replace with your real auth/session check)
+   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.is_admin) {
       navigate('/login');
@@ -24,38 +45,30 @@ export default function AdminDashboard() {
   return (
     <>
       <AdminNavBar />
-      <div className="p-8">
-        <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-        {/* Quick Navigation Flex Boxes */}
-        <div className="flex flex-col md:flex-row gap-6 mb-10">
-          <div
-            className="flex-1 bg-gradient-to-br from-mainRed to-pink-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+      <div className="p-6 md:p-10 bg-gray-50 min-h-screen">
+        <h1 className="text-4xl font-extrabold text-mainRed mb-10 tracking-wide">Admin Dashboard</h1>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <DashboardCard
+            icon={faUsers}
+            title="Users"
+            description="Manage all users and admins."
             onClick={() => navigate('/admin/users')}
-          >
-            <span className="text-4xl mb-2 text-white"><i className="fas fa-users"></i></span>
-            <h2 className="text-2xl font-semibold text-white mb-1">Users</h2>
-            <p className="text-white text-center">Manage all users, admins, and perform CRUD operations.</p>
-          </div>
-          <div
-            className="flex-1 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+          />
+          <DashboardCard
+            icon={faMapMarkedAlt}
+            title="Locations"
+            description="View and manage all travel locations."
             onClick={() => navigate('/admin/locations')}
-          >
-            <span className="text-4xl mb-2 text-white"><i className="fas fa-map-marked-alt"></i></span>
-            <h2 className="text-2xl font-semibold text-white mb-1">Locations</h2>
-            <p className="text-white text-center">View, add, and manage all travel locations.</p>
-          </div>
-          <div
-            className="flex-1 bg-gradient-to-br from-green-500 to-emerald-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+          />
+          <DashboardCard
+            icon={faCalendarCheck}
+            title="Bookings"
+            description="Review and manage user bookings."
             onClick={() => navigate('/admin/bookings')}
-          >
-            <span className="text-4xl mb-2 text-white"><i className="fas fa-calendar-check"></i></span>
-            <h2 className="text-2xl font-semibold text-white mb-1">Bookings</h2>
-            <p className="text-white text-center">Review and manage all bookings made by users.</p>
-          </div>
+          />
         </div>
-
-        {/* Bookings Table removed, now on its own page */}
       </div>
     </>
   );

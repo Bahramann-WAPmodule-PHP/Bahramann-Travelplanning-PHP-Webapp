@@ -130,7 +130,7 @@ const handleSubmit = async (e) => {
     <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
       <div className="flex w-9/12 h-9/12 rounded-lg shadow-xl overflow-hidden">
         <div className="bg-mainRed shadow-lg flex flex-col text-white w-5/10 items-center justify-center text-2xl font-bold">
-          <img src={whiteLogo} alt="Bhraman Logo" className="w-30 h-24 mb-4" />
+          <img src={whiteLogo} alt="Bhraman Logo" className="h-20 mb-4" />
           <p className="text-lg italic font-normal">Your official travel partner</p>
         </div>
         <div className="bg-white p-4 w-5/10 flex flex-col justify-center">

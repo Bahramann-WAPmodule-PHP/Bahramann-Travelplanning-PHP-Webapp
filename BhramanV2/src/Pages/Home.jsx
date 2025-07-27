@@ -87,7 +87,7 @@ export default function Home() {
                     </div>
                 ))}
             </div>
-            <button className='button bg-mainRed m-10' onClick={handleViewMore}>
+            <button className='button bg-mainRed m-10 p-2' onClick={handleViewMore}>
           View more
         </button>
         </div>

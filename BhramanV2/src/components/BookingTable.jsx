@@ -1,3 +1,5 @@
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -55,18 +57,15 @@ export default function BookingTable() {
           className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md font-medium shadow-sm border border-gray-200"
           onClick={() => navigate('/admin/dashboard')}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
+          <FontAwesomeIcon icon={faAngleLeft} />
           Back
         </button>
-        {/* Optionally, center or left-align the heading. Remove 'ml-auto' if you want left-aligned */}
-        <h2 className="text-2xl font-bold text-blue-700 mb-0 ml-6">All Bookings</h2>
+        <h2 className="text-2xl font-bold text-mainRed mb-0 ml-6">All Bookings</h2>
       </div>
       <div className="overflow-x-auto rounded-xl">
         <table className="min-w-full text-sm text-gray-700">
           <thead>
-            <tr className="bg-blue-100 text-blue-800">
+            <tr className="bg-red-100 text-mainRed">
               <th className="py-3 px-4 font-semibold text-left rounded-tl-xl">Booking ID</th>
               <th className="py-3 px-4 font-semibold text-left">User ID</th>
               <th className="py-3 px-4 font-semibold text-left">Location ID</th>
@@ -84,7 +83,7 @@ export default function BookingTable() {
             ) : (
               bookings.map((booking, idx) => (
                 <React.Fragment key={booking.booking_id}>
-                  <tr className={idx % 2 === 0 ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100 transition'}>
+                  <tr className={idx % 2 === 0 ? 'bg-white' : 'bg-red-50 hover:bg-red-100 transition'}>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.booking_id}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.user_id}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.location_id}</td>
@@ -92,7 +91,12 @@ export default function BookingTable() {
                     <td className="py-2 px-4 border-b border-gray-100">{booking.number_of_people}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.booking_date}</td>
                     <td className="py-2 px-4 border-b border-gray-100 flex gap-2 items-center relative">
-                      <button className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-xs" onClick={() => handleDeleteClick(booking.booking_id, idx)}>Delete</button>
+                      <button
+                        className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-xs"
+                        onClick={() => handleDeleteClick(booking.booking_id, idx)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 </React.Fragment>
@@ -102,7 +106,6 @@ export default function BookingTable() {
         </table>
       </div>
 
-      {/* Delete confirmation popup (center of page, compact, with close icon) */}
       {deleteConfirm.show && (
         <div
           id="delete-modal-overlay"

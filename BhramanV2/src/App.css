@@ -43,7 +43,7 @@ body{
 
 @layer{
     .button{
-        @apply p-1 rounded-[5px] text-white hover:opacity-60 transition-opacity duration-300 ease-in-out cursor-pointer flex items-center justify-center;
+        @apply  rounded-[5px] text-white hover:opacity-60 transition-opacity duration-300 ease-in-out cursor-pointer flex items-center justify-center;
     }
 
     .links{
@@ -51,14 +51,13 @@ body{
     }
 }
 
-/* Success popup animation */
 @keyframes slide-down {
   from {
-    transform: translateY(-100%) translateX(-50%);
+    transform: translateY(-100%);
     opacity: 0;
   }
   to {
-    transform: translateY(0) translateX(-50%);
+    transform: translateY(0);
     opacity: 1;
   }
 }

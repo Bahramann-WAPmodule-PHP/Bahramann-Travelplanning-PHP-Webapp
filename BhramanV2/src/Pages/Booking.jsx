@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BookingCard from '../components/BookingCard.jsx';
 import CommentCard from '../components/CommentCard.jsx';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { apiRoute } from '../utils/apiRoute.js';
 import { useSelector } from 'react-redux';
 import RateModal from '../components/RateModal.jsx';
@@ -9,12 +9,15 @@ import RateModal from '../components/RateModal.jsx';
 
 export default function Booking() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const editBookingId = searchParams.get('edit');
   const [bookingData, setBookingData] = useState(null);
   const [hotelOptions, setHotelOptions] = useState([]);
   const [vehicleOptions, setVehicleOptions] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
-    const user = useSelector((state) => state.LoginSlice.user);
+  const [existingBookingData, setExistingBookingData] = useState(null);
+  const user = useSelector((state) => state.LoginSlice.user);
   
 
   useEffect(() => {
@@ -23,7 +26,6 @@ export default function Booking() {
         const response = await fetch(`${apiRoute.getLocationDetail}?id=${id}`);
         if (!response.ok) throw new Error('Failed to fetch location details');
         const data = await response.json();
-        // Parse hotel names and prices from comma-separated strings
         const hotelNames = data.data.hotel_names 
           ? data.data.hotel_names.split(',').map(hotel => hotel.trim())
           : [];
@@ -33,7 +35,6 @@ export default function Booking() {
         const vehicleTypes = data.data.vehicle_type 
           ? data.data.vehicle_type.split(',').map(vehicle => vehicle.trim())
           : [];
-        // Combine hotel names with their corresponding prices
         const hotels = hotelNames.map((hotel, index) => ({
           value: hotel,
           price: hotelPrices[index] || 'N/A'
@@ -44,6 +45,22 @@ export default function Booking() {
         setVehicleOptions(vehicles);
       } catch (error) {
         console.error('Fetch error (location):', error);
+      }
+    };
+
+    const fetchExistingBooking = async () => {
+      if (!editBookingId) return;
+      
+      try {
+        const response = await fetch(`${apiRoute.manageBookings}?booking_id=${editBookingId}`, {
+          credentials: 'include'
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+          setExistingBookingData(result.data);
+        }
+      } catch (error) {
+        console.error('Fetch error (existing booking):', error);
       }
     };
 
@@ -60,8 +77,9 @@ export default function Booking() {
     };
 
     fetchData();
+    fetchExistingBooking();
     fetchComments();
-  }, [id]);
+  }, [id, editBookingId]);
 
   const handleSubmit = async () => {
     if (!commentText.trim()) return;
@@ -102,7 +120,15 @@ export default function Booking() {
 
   return (
     <div className='w-full flex flex-col justify-center items-center gap-4 p-4'>
-      <BookingCard {...bookingData} hotelOptions={hotelOptions} vehicleOptions={vehicleOptions} />
+      <BookingCard 
+        {...bookingData} 
+        hotelOptions={hotelOptions} 
+        vehicleOptions={vehicleOptions}
+        isEditing={!!editBookingId}
+        editBookingId={editBookingId}
+        existingBookingData={existingBookingData}
+        numReviews={comments.length}
+      />
       
       <div className='w-9/10 bg-white shadow-lg rounded-lg p-6 flex flex-col gap-4 transition-all duration-200 hover:shadow-xl'>
         <h3 className="text-lg font-semibold text-gray-800 mb-2">Share Your Experience</h3>
@@ -115,7 +141,7 @@ export default function Booking() {
         <button 
           onClick={handleSubmit} 
           disabled={!commentText.trim()}
-          className="bg-mainRed text-white px-6 py-2 rounded-lg self-end hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
+          className="bg-mainRed text-white px-6 py-2 rounded-lg self-end button disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform"
         >
           Submit Review
         </button>
@@ -136,8 +162,6 @@ export default function Booking() {
                 key={index}
                 name={comment.name}
                 comment={comment.comment}
-                likes={comment.likes || 0}
-                dislikes={comment.dislikes || 0}
               />
             ))}
           </>

@@ -68,6 +68,71 @@ try {
         }
 
     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        // Check if we're fetching a specific booking for editing
+        if (isset($_GET['booking_id'])) {
+            $bookingId = intval($_GET['booking_id']);
+            
+            // Get specific booking for editing
+            $stmt = $pdo->prepare("
+                SELECT 
+                    b.booking_id,
+                    b.location_id,
+                    b.vehicle_type,
+                    b.number_of_people,
+                    b.booking_date,
+                    l.location_name,
+                    l.image_url,
+                    l.description,
+                    l.hotel_names,
+                    l.hotel_prices
+                FROM booking b
+                JOIN location l ON b.location_id = l.location_id
+                WHERE b.booking_id = ? AND b.user_id = ?
+            ");
+            
+            $stmt->execute([$bookingId, $userId]);
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$booking) {
+                echo json_encode(['success' => false, 'error' => 'Booking not found']);
+                exit;
+            }
+            
+            // Parse hotel names and prices
+            $hotelNames = $booking['hotel_names'] ? explode(',', $booking['hotel_names']) : ['Hotel'];
+            $hotelPrices = $booking['hotel_prices'] ? explode(',', $booking['hotel_prices']) : ['10000'];
+            
+            // Use first hotel as default (you can enhance this logic later)
+            $hotelName = trim($hotelNames[0]);
+            $hotelPrice = trim($hotelPrices[0]);
+            
+            // Fix image URL path
+            $imageUrl = $booking['image_url'];
+            if ($imageUrl) {
+                if (strpos($imageUrl, 'http') !== 0) {
+                    $imageUrl = ltrim($imageUrl, '/');
+                    $imageUrl = 'http://localhost/Bhramanapp/Backend/' . $imageUrl;
+                }
+            }
+            
+            $formattedBooking = [
+                'booking_id' => $booking['booking_id'],
+                'location_id' => $booking['location_id'],
+                'location_name' => $booking['location_name'],
+                'hotel_name' => $hotelName,
+                'image_url' => $imageUrl,
+                'description' => $booking['description'],
+                'vehicle_type' => $booking['vehicle_type'],
+                'number_of_people' => $booking['number_of_people'],
+                'booking_date' => $booking['booking_date'],
+                'price' => floatval(str_replace(['Rs.', 'Rs', ',', ' '], '', $hotelPrice)),
+                'total_price' => floatval(str_replace(['Rs.', 'Rs', ',', ' '], '', $hotelPrice)) * $booking['number_of_people']
+            ];
+            
+            echo json_encode(['success' => true, 'data' => $formattedBooking]);
+            exit;
+        }
+        
         // Get user's bookings
         $stmt = $pdo->prepare("
             SELECT 
@@ -132,6 +197,64 @@ try {
             'success' => true,
             'bookings' => $formattedBookings
         ]);
+
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+        // Update an existing booking
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($input['booking_id'], $input['vehicle_type'], $input['number_of_people'], $input['booking_date'])) {
+            echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+            exit;
+        }
+
+        $bookingId = intval($input['booking_id']);
+        $vehicleType = trim($input['vehicle_type']);
+        $numberOfPeople = intval($input['number_of_people']);
+        $bookingDate = $input['booking_date'];
+
+        // Validate inputs
+        if ($bookingId <= 0) {
+            echo json_encode(['success' => false, 'error' => 'Invalid booking ID']);
+            exit;
+        }
+
+        if ($numberOfPeople <= 0 || $numberOfPeople > 50) {
+            echo json_encode(['success' => false, 'error' => 'Number of people must be between 1 and 50']);
+            exit;
+        }
+
+        // Validate booking date (should be today or in future)
+        if (strtotime($bookingDate) < strtotime('today')) {
+            echo json_encode(['success' => false, 'error' => 'Booking date must be today or in the future']);
+            exit;
+        }
+
+        // Check if booking exists and belongs to the user
+        $checkStmt = $pdo->prepare("SELECT booking_id FROM booking WHERE booking_id = ? AND user_id = ?");
+        $checkStmt->execute([$bookingId, $userId]);
+        
+        if ($checkStmt->rowCount() === 0) {
+            echo json_encode(['success' => false, 'error' => 'Booking not found or unauthorized']);
+            exit;
+        }
+
+        // Update the booking
+        $updateStmt = $pdo->prepare("
+            UPDATE booking 
+            SET vehicle_type = ?, number_of_people = ?, booking_date = ? 
+            WHERE booking_id = ? AND user_id = ?
+        ");
+        $result = $updateStmt->execute([$vehicleType, $numberOfPeople, $bookingDate, $bookingId, $userId]);
+
+        if ($result) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Booking updated successfully',
+                'booking_id' => $bookingId
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Failed to update booking']);
+        }
 
     } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         // Delete a booking
