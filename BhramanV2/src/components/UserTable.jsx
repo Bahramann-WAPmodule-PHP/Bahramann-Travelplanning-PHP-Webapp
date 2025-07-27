@@ -3,9 +3,12 @@ import { apiRoute } from '../utils/apiRoute';
 
 export default function UserTable() {
   const [users, setUsers] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
-  const [addError, setAddError] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [formMode, setFormMode] = useState('add'); // 'add' or 'edit'
+  const [formUserId, setFormUserId] = useState(null);
+  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
+  const [formError, setFormError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, userId: null, anchorIdx: null });
 
   const fetchUsers = () => {
     fetch('http://localhost/Bhramanapp/Backend/server/users/get_users.php')
@@ -22,37 +25,114 @@ export default function UserTable() {
   }, []);
 
 
-  // Add user form handlers
-  const handleAddChange = e => {
+  // Unified add/edit form handlers
+  const handleFormChange = e => {
     const { name, value, type, checked } = e.target;
-    setAddForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+    setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const handleAddSubmit = async e => {
+  const handleFormSubmit = async e => {
     e.preventDefault();
-    setAddError('');
-    // Simple validation
-    if (!addForm.first_name || !addForm.last_name || !addForm.email || !addForm.password) {
-      setAddError('All fields are required.');
+    setFormError('');
+    if (!form.first_name || !form.last_name || !form.email || (formMode === 'add' && !form.password)) {
+      setFormError('All fields are required.');
       return;
     }
     try {
-      const res = await fetch('http://localhost/Bhramanapp/Backend/server/users/add_user.php', {
+      if (formMode === 'add') {
+        const res = await fetch('http://localhost/Bhramanapp/Backend/server/users/add_user.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setShowForm(false);
+          setForm({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
+          fetchUsers();
+        } else {
+          setFormError(data.error || 'Failed to add user.');
+        }
+      } else {
+        // edit mode
+        const res = await fetch('http://localhost/Bhramanapp/Backend/server/users/edit_user.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: formUserId,
+            first_name: form.first_name,
+            last_name: form.last_name,
+            email: form.email,
+            is_admin: form.is_admin
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setShowForm(false);
+          setForm({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
+          setFormMode('add');
+          setFormUserId(null);
+          fetchUsers();
+        } else {
+          setFormError(data.error || 'Failed to update user.');
+        }
+      }
+    } catch (err) {
+      setFormError('Failed to submit form.');
+    }
+  };
+
+  const handleEditClick = (user) => {
+    const [first_name = '', ...rest] = user.username.split(' ');
+    const last_name = rest.join(' ');
+    setForm({
+      first_name,
+      last_name,
+      email: user.email,
+      password: '',
+      is_admin: !!user.is_admin
+    });
+    setFormMode('edit');
+    setFormUserId(user.id);
+    setShowForm(true);
+    setFormError('');
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setFormMode('add');
+    setFormUserId(null);
+    setFormError('');
+    setForm({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
+  };
+
+  // Delete user handler
+  const handleDeleteClick = (id, idx) => {
+    setDeleteConfirm({ show: true, userId: id, anchorIdx: idx });
+  };
+
+  const confirmDelete = async () => {
+    const id = deleteConfirm.userId;
+    try {
+      const res = await fetch('http://localhost/Bhramanapp/Backend/server/users/delete_user.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(addForm)
+        body: JSON.stringify({ id })
       });
       const data = await res.json();
       if (data.success) {
-        setShowAddModal(false);
-        setAddForm({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
         fetchUsers();
       } else {
-        setAddError(data.error || 'Failed to add user.');
+        alert(data.error || 'Failed to delete user.');
       }
     } catch (err) {
-      setAddError('Failed to add user.');
+      alert('Failed to delete user.');
     }
+    setDeleteConfirm({ show: false, userId: null });
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({ show: false, userId: null });
   };
 
   return (
@@ -76,47 +156,56 @@ export default function UserTable() {
             <button
               className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md transition"
               type="button"
-              onClick={() => setShowAddModal(v => !v)}
+              onClick={() => {
+                setShowForm(v => !v);
+                setFormMode('add');
+                setFormUserId(null);
+                setForm({ first_name: '', last_name: '', email: '', password: '', is_admin: false });
+                setFormError('');
+              }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Add User
             </button>
-            {showAddModal && (
+            {showForm && (
               <div className="absolute right-0 mt-2 z-50 bg-white rounded-xl shadow-2xl p-6 w-80 border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-bold text-blue-700">Add New User</h3>
-                  <button className="text-gray-400 hover:text-gray-600 text-xl" onClick={() => setShowAddModal(false)}>&times;</button>
+                  <h3 className="text-lg font-bold text-blue-700">{formMode === 'add' ? 'Add New User' : 'Edit User'}</h3>
+                  <button className="text-gray-400 hover:text-gray-600 text-xl" onClick={handleFormCancel}>&times;</button>
                 </div>
-                {addError && <div className="mb-2 text-red-500 text-sm">{addError}</div>}
-                <form onSubmit={handleAddSubmit} className="space-y-3">
+                {formError && <div className="mb-2 text-red-500 text-sm">{formError}</div>}
+                <form onSubmit={handleFormSubmit} className="space-y-3">
                   <div className="flex gap-2">
                     <div className="w-1/2">
                       <label className="block text-sm font-medium mb-1">First Name</label>
-                      <input type="text" name="first_name" value={addForm.first_name} onChange={handleAddChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+                      <input type="text" name="first_name" value={form.first_name} onChange={handleFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
                     </div>
                     <div className="w-1/2">
                       <label className="block text-sm font-medium mb-1">Last Name</label>
-                      <input type="text" name="last_name" value={addForm.last_name} onChange={handleAddChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+                      <input type="text" name="last_name" value={form.last_name} onChange={handleFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Email</label>
-                    <input type="email" name="email" value={addForm.email} onChange={handleAddChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+                    <input type="email" name="email" value={form.email} onChange={handleFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Password</label>
-                    <input type="password" name="password" value={addForm.password} onChange={handleAddChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                  </div>
+                  {formMode === 'add' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Password</label>
+                      <input type="password" name="password" value={form.password} onChange={handleFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" name="is_admin" checked={addForm.is_admin} onChange={handleAddChange} id="is_admin" />
+                    <input type="checkbox" name="is_admin" checked={form.is_admin} onChange={handleFormChange} id="is_admin" />
                     <label htmlFor="is_admin" className="text-sm">Is Admin</label>
                   </div>
-                  <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold shadow-md transition">Add User</button>
+                  <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold shadow-md transition">{formMode === 'add' ? 'Add User' : 'Save Changes'}</button>
                 </form>
               </div>
             )}
           </div>
         </div>
+        {/* Delete confirmation dropdown (inline, below the row) */}
         <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full text-sm text-gray-700">
             <thead>
@@ -136,20 +225,32 @@ export default function UserTable() {
                 </tr>
               ) : (
                 users.map((user, idx) => (
-                  <tr key={user.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100 transition'}>
-                    <td className="py-2 px-4 border-b border-gray-100">{user.id}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">{user.username}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">{user.email}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">
-                      <span className={user.is_admin ? 'bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold'}>
-                        {user.is_admin ? 'Admin' : 'User'}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4 border-b border-gray-100">{user.created_at ? new Date(user.created_at).toLocaleString() : '-'}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">
-                      <button className="bg-red-100 text-red-600 px-3 py-1 rounded-lg hover:bg-red-200 transition font-medium shadow-sm">Delete</button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={user.id}>
+                    <tr className={idx % 2 === 0 ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100 transition'}>
+                      <td className="py-2 px-4 border-b border-gray-100">{user.id}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">{user.username}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">{user.email}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">
+                        <span className={user.is_admin ? 'bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold'}>
+                          {user.is_admin ? 'Admin' : 'User'}
+                        </span>
+                      </td>
+                      <td className="py-2 px-4 border-b border-gray-100">{user.created_at ? new Date(user.created_at).toLocaleString() : '-'}</td>
+                      <td className="py-2 px-4 border-b border-gray-100 flex gap-2 items-center relative">
+                        <button className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 text-xs" onClick={() => handleEditClick(user)}>Edit</button>
+                        <button className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-xs" onClick={() => handleDeleteClick(user.id, idx)}>Delete</button>
+                        {deleteConfirm.show && deleteConfirm.userId === user.id && deleteConfirm.anchorIdx === idx && (
+                          <div className="absolute top-8 right-0 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 w-64 flex flex-col items-center animate-fade-in">
+                            <h3 className="text-base font-bold text-red-700 mb-3 text-center">Are you sure you want to delete this user?</h3>
+                            <div className="flex gap-3 mt-1">
+                              <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-semibold" onClick={confirmDelete}>Delete</button>
+                              <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-lg font-semibold" onClick={cancelDelete}>Cancel</button>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  </React.Fragment>
                 ))
               )}
             </tbody>
