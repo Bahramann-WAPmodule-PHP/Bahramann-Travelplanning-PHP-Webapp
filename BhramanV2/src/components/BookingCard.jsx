@@ -15,7 +15,8 @@ export default function BookingCard({
   vehicleOptions,
   isEditing = false,
   editBookingId = null,
-  existingBookingData = null
+  existingBookingData = null,
+  numReviews
 }) {
   const [hotel, setHotel] = useState("");
   const [vehicle, setVehicle] = useState("");
@@ -68,7 +69,6 @@ export default function BookingCard({
       return;
     }
 
-    // Validate booking date (should be today or in future)
     const bookingDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -106,7 +106,6 @@ export default function BookingCard({
       if (result.success) {
         setShowSuccessPopup(true);
         if (!isEditing) {
-          // Reset form only for new bookings
           setHotel("");
           setVehicle("");
           setSelectedPrice("");
@@ -157,7 +156,7 @@ export default function BookingCard({
         <h1 className="text-4xl font-bold">{title}</h1>
         <div className="flex items-center gap-2">
           {renderStars(total_rating, num_ratings, "1.5rem")}
-          <span className="text-darkBlue font-bold text-2xl">{num_ratings} Reviews</span>
+          <span className="text-darkBlue font-bold text-2xl">{num_ratings + numReviews} Rating and Review{num_ratings + numReviews === 1 ? "" : "s"}</span>
         </div>
         <p className="text-gray-500 mt-2 text-justify">{description}</p>
 
@@ -214,10 +213,10 @@ export default function BookingCard({
         </div>
 
         <div className="w-full flex justify-end gap-4 mt-6">
-          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200" onClick={() => setIsRateModalOpen(true)}>
+          <button className="bg-mainRed button text-white font-semibold py-3 px-6 text-lg transition-colors duration-200" onClick={() => setIsRateModalOpen(true)}>
             Rate
           </button>
-          <button className="bg-mainRed hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200" onClick={handleSubmit}>
+          <button className="button bg-mainRed text-white font-semibold py-3 px-8 text-lg transition-colors duration-200" onClick={handleSubmit}>
             {isEditing ? 'Update Booking' : 'Confirm'}
           </button>
         </div>

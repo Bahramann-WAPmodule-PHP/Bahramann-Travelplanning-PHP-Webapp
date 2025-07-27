@@ -17,7 +17,7 @@ const handleLogout = async () => {
   try {
     const response = await fetch(apiRoute.logout, {
       method: "POST",
-      credentials: 'include', // Include cookies for logout
+      credentials: 'include',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -27,8 +27,8 @@ const handleLogout = async () => {
     const data = await response.json();
 
     if (data.success) {
-      dispatch(logout()); // Update Redux with logout action
-      navigate("/login"); // Go to login page
+      dispatch(logout());
+      navigate("/login");
       setShowLogoutConfirm(false);
     } else {
       console.error("Logout failed:", data);

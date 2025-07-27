@@ -7,7 +7,6 @@ export default function AdminUsers() {
     <>
       <AdminNavBar />
       <div className="p-8">
-        <h1 className="text-3xl font-bold mb-6">All Users</h1>
         <UserTable />
       </div>
     </>

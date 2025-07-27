@@ -26,7 +26,6 @@ export default function Booking() {
         const response = await fetch(`${apiRoute.getLocationDetail}?id=${id}`);
         if (!response.ok) throw new Error('Failed to fetch location details');
         const data = await response.json();
-        // Parse hotel names and prices from comma-separated strings
         const hotelNames = data.data.hotel_names 
           ? data.data.hotel_names.split(',').map(hotel => hotel.trim())
           : [];
@@ -36,7 +35,6 @@ export default function Booking() {
         const vehicleTypes = data.data.vehicle_type 
           ? data.data.vehicle_type.split(',').map(vehicle => vehicle.trim())
           : [];
-        // Combine hotel names with their corresponding prices
         const hotels = hotelNames.map((hotel, index) => ({
           value: hotel,
           price: hotelPrices[index] || 'N/A'
@@ -129,6 +127,7 @@ export default function Booking() {
         isEditing={!!editBookingId}
         editBookingId={editBookingId}
         existingBookingData={existingBookingData}
+        numReviews={comments.length}
       />
       
       <div className='w-9/10 bg-white shadow-lg rounded-lg p-6 flex flex-col gap-4 transition-all duration-200 hover:shadow-xl'>
@@ -142,7 +141,7 @@ export default function Booking() {
         <button 
           onClick={handleSubmit} 
           disabled={!commentText.trim()}
-          className="bg-mainRed text-white px-6 py-2 rounded-lg self-end hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
+          className="bg-mainRed text-white px-6 py-2 rounded-lg self-end button disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform"
         >
           Submit Review
         </button>
@@ -163,8 +162,6 @@ export default function Booking() {
                 key={index}
                 name={comment.name}
                 comment={comment.comment}
-                likes={comment.likes || 0}
-                dislikes={comment.dislikes || 0}
               />
             ))}
           </>
