@@ -34,7 +34,9 @@ try {
         'description' => $location['description'],
         'hotel_names' => $location['hotel_names'],
         'hotel_prices' => $location['hotel_prices'],
-cho json_encode(['success' => true, 'data' => $response]);
+        'vehicle_type' => $location['vehicle_type'],
+    ];
+    echo json_encode(['success' => true, 'data' => $response]);
 
 } catch (PDOException $e) {
     error_log('Get location detail error: ' . $e->getMessage());
