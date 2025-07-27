@@ -5,6 +5,7 @@ import AdminNavBar from '../components/AdminNavBar';
 import LocationTable from '../components/LocationTable';
 import AddLocation from '../components/AddLocation';
 import UserTable from '../components/UserTable';
+import BookingTable from '../components/BookingTable';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function AdminDashboard() {
           </div>
           <div
             className="flex-1 bg-gradient-to-br from-green-500 to-emerald-400 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
-            onClick={() => document.getElementById('bookings-table').scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => navigate('/admin/bookings')}
           >
             <span className="text-4xl mb-2 text-white"><i className="fas fa-calendar-check"></i></span>
             <h2 className="text-2xl font-semibold text-white mb-1">Bookings</h2>
@@ -54,7 +55,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Only the flex box navigation remains as requested */}
+        {/* Bookings Table removed, now on its own page */}
       </div>
     </>
   );

@@ -11,6 +11,7 @@ import { apiRoute } from "../utils/apiRoute.js";
 import Booking from "./Booking.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
 import AdminUsers from "./AdminUsers.jsx";
+import AdminBookings from "./AdminBookings.jsx";
 
 export default function AppRoutes() {
   const [open, setOpen] = useState(false);
@@ -56,6 +57,7 @@ export default function AppRoutes() {
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/bookings" element={<AdminBookings />} />
         </Routes>
       </div>
     </>
