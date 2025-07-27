@@ -131,13 +131,13 @@ export default function NavBar({ open, setOpen }) {
         ) : (
           <div className="hidden md:flex items-center gap-2">
             <button
-              className="button bg-mainRed"
+              className="button bg-mainRed p-2"
               onClick={() => navigate("/login")}
             >
               Login
             </button>
             <button
-              className="button bg-mainRed"
+              className="button bg-mainRed p-2"
               onClick={() => navigate("/signup")}
             >
               Register
@@ -153,13 +153,13 @@ export default function NavBar({ open, setOpen }) {
           </button>
         : (<div className="flex items-center gap-2">
             <button
-              className="button bg-mainRed"
+              className="button bg-mainRed p-2"
               onClick={() => navigate("/login")}
             >
               Login
             </button>
             <button
-              className="button bg-mainRed"
+              className="button bg-mainRed p-2"
               onClick={() => navigate("/signup")}
             >
               Register

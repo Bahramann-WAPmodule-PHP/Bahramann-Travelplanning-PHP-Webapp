@@ -213,7 +213,7 @@ const handleSubmit = async () => {
         </div>
 
         {errors.general && <p className="text-red-500 text-center mb-4">{errors.general}</p>}
-          <button className="button bg-mainRed w-full" onClick={handleSubmit}>Signup</button>
+          <button className="button p-2 bg-mainRed w-full" onClick={handleSubmit}>Signup</button>
           <p className="text-center mt-4 text-gray-500">
             Already have an account? <button  className="text-blue-500" onClick={()=>navigate('/login')}>click here to login </button>
           </p>

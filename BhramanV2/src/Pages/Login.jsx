@@ -197,7 +197,7 @@ const handleSubmit = async (e) => {
 
             <button
               type="submit"
-              className="button bg-mainRed w-full text-white py-2 rounded"
+              className="button bg-mainRed w-full text-white p-2 rounded"
             >
               Login
             </button>
