@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function BookingTable() {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, bookingId: null, anchorIdx: null });
 
@@ -47,8 +49,20 @@ export default function BookingTable() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto shadow-xl rounded-2xl bg-white p-6 border border-gray-200 mt-8">
-      <h2 className="text-2xl font-bold text-blue-700 mb-6">All Bookings</h2>
+    <div className="w-full max-w-5xl mx-auto shadow-xl rounded-2xl bg-white p-6 border border-gray-200 mt-8 relative">
+      <div className="flex items-center mb-4">
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md font-medium shadow-sm border border-gray-200"
+          onClick={() => navigate('/admin/dashboard')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          Back
+        </button>
+        {/* Optionally, center or left-align the heading. Remove 'ml-auto' if you want left-aligned */}
+        <h2 className="text-2xl font-bold text-blue-700 mb-0 ml-6">All Bookings</h2>
+      </div>
       <div className="overflow-x-auto rounded-xl">
         <table className="min-w-full text-sm text-gray-700">
           <thead>
@@ -79,17 +93,6 @@ export default function BookingTable() {
                     <td className="py-2 px-4 border-b border-gray-100">{booking.booking_date}</td>
                     <td className="py-2 px-4 border-b border-gray-100 flex gap-2 items-center relative">
                       <button className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-xs" onClick={() => handleDeleteClick(booking.booking_id, idx)}>Delete</button>
-                      {/* No inline delete confirm, handled by modal below */}
-      {/* Delete confirmation dropdown (inline, below the row, centered) */}
-                      {deleteConfirm.show && deleteConfirm.bookingId === booking.booking_id && deleteConfirm.anchorIdx === idx && (
-                        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 w-80 flex flex-col items-center animate-fade-in">
-                          <h3 className="text-base font-bold text-red-700 mb-3 text-center break-words">Are you sure you want to delete this booking?</h3>
-                          <div className="flex gap-3 mt-1 flex-wrap justify-center">
-                            <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg font-semibold" onClick={confirmDelete}>Delete</button>
-                            <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-1 rounded-lg font-semibold" onClick={cancelDelete}>Cancel</button>
-                          </div>
-                        </div>
-                      )}
                     </td>
                   </tr>
                 </React.Fragment>
@@ -98,6 +101,30 @@ export default function BookingTable() {
           </tbody>
         </table>
       </div>
+
+      {/* Delete confirmation popup (center of page, compact, with close icon) */}
+      {deleteConfirm.show && (
+        <div
+          id="delete-modal-overlay"
+          onClick={e => { if (e.target.id === 'delete-modal-overlay') cancelDelete(); }}
+          className="fixed w-screen h-screen top-0 left-0 bg-black/50 flex justify-center items-center z-50"
+        >
+          <div className="bg-white rounded-lg p-6 w-[300px] shadow-xl flex flex-col items-center gap-4 relative animate-fade-in">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-lg font-bold focus:outline-none"
+              onClick={cancelDelete}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h3 className="text-base font-bold text-red-700 mb-3 text-center">Are you sure you want to delete this booking?</h3>
+            <div className="flex gap-3 mt-1 flex-wrap justify-center">
+              <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg font-semibold" onClick={confirmDelete}>Delete</button>
+              <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-1 rounded-lg font-semibold" onClick={cancelDelete}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
