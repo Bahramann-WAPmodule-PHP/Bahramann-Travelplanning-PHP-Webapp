@@ -108,7 +108,7 @@ export default function MyBooking() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <FontAwesomeIcon icon={faSpinner} spin className="text-4xl text-mainRed mb-4" />
           <p className="text-xl text-gray-600">Loading your bookings...</p>
@@ -119,7 +119,7 @@ export default function MyBooking() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md">
           <FontAwesomeIcon icon={faExclamationTriangle} className="text-4xl text-red-500 mb-4" />
           <p className="text-xl text-red-600 mb-4">Error Loading Bookings</p>
@@ -143,7 +143,7 @@ export default function MyBooking() {
   const groupedBookings = groupBookingsByLocation(bookings);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-1 pb-2">
+    <div className="min-h-screen pt-1 pb-2">
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">My bookings</h1>
         
