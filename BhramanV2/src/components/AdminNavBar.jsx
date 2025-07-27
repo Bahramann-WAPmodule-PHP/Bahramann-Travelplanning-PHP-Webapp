@@ -30,6 +30,7 @@ export default function AdminNavBar() {
     try {
       const response = await fetch(apiRoute.logout, {
         method: "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -37,6 +38,9 @@ export default function AdminNavBar() {
       });
       const data = await response.json();
       if (data.success) {
+        // Clear localStorage
+        localStorage.removeItem('user');
+        localStorage.clear();
         dispatch(logout());
         navigate("/login");
         setShowProfileDropdown(false);

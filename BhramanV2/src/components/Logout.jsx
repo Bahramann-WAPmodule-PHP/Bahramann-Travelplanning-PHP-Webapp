@@ -27,6 +27,9 @@ const handleLogout = async () => {
     const data = await response.json();
 
     if (data.success) {
+      // Clear localStorage
+      localStorage.removeItem('user');
+      localStorage.clear();
       dispatch(logout());
       navigate("/login");
       setShowLogoutConfirm(false);
