@@ -33,7 +33,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
 
-  useEffect(() => {
+   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.is_admin) {
       navigate('/login');
@@ -60,9 +60,7 @@ export default function AdminDashboard() {
             icon={faMapMarkedAlt}
             title="Locations"
             description="View and manage all travel locations."
-            onClick={() =>
-              document.getElementById('locations-table')?.scrollIntoView({ behavior: 'smooth' })
-            }
+            onClick={() => navigate('/admin/locations')}
           />
           <DashboardCard
             icon={faCalendarCheck}

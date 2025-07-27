@@ -8,6 +8,11 @@ try {
     $post = $_POST;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($post['action']) && $post['action'] === 'logout') {
+        // Make sure session is started before trying to destroy it
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         session_unset();
         session_destroy();
 
@@ -23,7 +28,17 @@ try {
             }
         }
 
+        // Clear the remember_token cookie with proper settings
         setcookie('remember_token', '', time() - 3600, "/", "", false, true);
+        
+        // Also clear the session cookie
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
 
         echo json_encode(['success' => true]);
         exit;

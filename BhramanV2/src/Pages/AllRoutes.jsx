@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLoggedIn, setUser } from "../redux/feature/LoginSlice";
+import { setLoggedIn, setUser, logout } from "../redux/feature/LoginSlice";
 import Home from "./Home.jsx";
 import NavBar from "../components/NavBar.jsx";
 import Modal from "../components/Modal.jsx";
@@ -12,6 +12,7 @@ import Booking from "./Booking.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
 import AdminUsers from "./AdminUsers.jsx";
 import AdminBookings from "./AdminBookings.jsx";
+import AdminLocations from "./AdminLocations.jsx";
 
 export default function AppRoutes() {
   const [open, setOpen] = useState(false);
@@ -33,9 +34,16 @@ export default function AppRoutes() {
         if (data.success && data.user) {
           dispatch(setLoggedIn(true));
           dispatch(setUser(data.user));
+        } else {
+          // Clear state if session check fails
+          dispatch(logout());
+          localStorage.removeItem('user');
         }
       } catch (error) {
         console.error("Session check failed:", error);
+        // Clear state on error
+        dispatch(logout());
+        localStorage.removeItem('user');
       }
     };
 
@@ -58,6 +66,7 @@ export default function AppRoutes() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/locations" element={<AdminLocations />} />
         </Routes>
       </div>
     </>

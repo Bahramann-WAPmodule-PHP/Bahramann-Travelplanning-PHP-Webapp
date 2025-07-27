@@ -34,6 +34,7 @@ export const useAuth = () => {
     try {
       const response = await fetch(apiRoute.logout, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -42,6 +43,9 @@ export const useAuth = () => {
 
       const data = await response.json();
       if (data.success) {
+        // Clear localStorage
+        localStorage.removeItem('user');
+        localStorage.clear();
         dispatch(logout());
         return true;
       }

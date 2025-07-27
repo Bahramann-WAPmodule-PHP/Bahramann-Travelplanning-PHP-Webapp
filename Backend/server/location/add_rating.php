@@ -1,8 +1,8 @@
 <?php
 require_once '../../config/common_api.php';
-
+require_once '../../config/db.php';
 try {
-    require_once '../../config/db.php';
+    
 
     // Check if user is logged in
     if (!isset($_SESSION['user_id'])) {
