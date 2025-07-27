@@ -301,13 +301,16 @@ export default function LocationTable() {
                 <th className="py-3 px-4 font-semibold text-left rounded-tl-xl">ID</th>
                 <th className="py-3 px-4 font-semibold text-left">Title</th>
                 <th className="py-3 px-4 font-semibold text-left">Description</th>
+                <th className="py-3 px-4 font-semibold text-left">Hotel Names</th>
+                <th className="py-3 px-4 font-semibold text-left">Hotel Prices</th>
+                <th className="py-3 px-4 font-semibold text-left">Vehicle Type</th>
                 <th className="py-3 px-4 font-semibold text-left rounded-tr-xl">Actions</th>
               </tr>
             </thead>
             <tbody>
               {locations.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-400">No locations found.</td>
+                  <td colSpan={7} className="text-center py-8 text-gray-400">No locations found.</td>
                 </tr>
               ) : (
                 locations.map((loc, idx) => (
@@ -316,6 +319,9 @@ export default function LocationTable() {
                       <td className="py-2 px-4 border-b border-gray-100">{loc.id}</td>
                       <td className="py-2 px-4 border-b border-gray-100">{loc.title}</td>
                       <td className="py-2 px-4 border-b border-gray-100">{loc.description}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">{loc.hotel_names}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">{loc.hotel_prices}</td>
+                      <td className="py-2 px-4 border-b border-gray-100">{loc.vehicle_type}</td>
                       <td className="py-2 px-4 border-b border-gray-100 flex gap-2 items-center relative">
                         <button
                           className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 text-xs"
