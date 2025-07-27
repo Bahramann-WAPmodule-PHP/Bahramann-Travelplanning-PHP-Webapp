@@ -240,11 +240,20 @@ export default function UserTable() {
                         <button className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 text-xs" onClick={() => handleEditClick(user)}>Edit</button>
                         <button className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 text-xs" onClick={() => handleDeleteClick(user.id, idx)}>Delete</button>
                         {deleteConfirm.show && deleteConfirm.userId === user.id && deleteConfirm.anchorIdx === idx && (
-                          <div className="absolute top-8 right-0 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 w-64 flex flex-col items-center animate-fade-in">
-                            <h3 className="text-base font-bold text-red-700 mb-3 text-center">Are you sure you want to delete this user?</h3>
-                            <div className="flex gap-3 mt-1">
-                              <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-semibold" onClick={confirmDelete}>Delete</button>
-                              <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-lg font-semibold" onClick={cancelDelete}>Cancel</button>
+                          <div id="user-delete-modal-overlay" className="fixed w-screen h-screen top-0 left-0 bg-black/50 flex justify-center items-center z-50">
+                            <div className="bg-white rounded-lg p-6 w-[300px] shadow-xl flex flex-col items-center gap-4 relative animate-fade-in">
+                              <button
+                                className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-lg font-bold focus:outline-none"
+                                onClick={cancelDelete}
+                                aria-label="Close"
+                              >
+                                &times;
+                              </button>
+                              <h3 className="text-base font-bold text-red-700 mb-3 text-center">Are you sure you want to delete this user?</h3>
+                              <div className="flex gap-3 mt-1 flex-wrap justify-center">
+                                <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg font-semibold" onClick={confirmDelete}>Delete</button>
+                                <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-1 rounded-lg font-semibold" onClick={cancelDelete}>Cancel</button>
+                              </div>
                             </div>
                           </div>
                         )}
