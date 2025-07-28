@@ -1,20 +1,23 @@
--- 1. Create the database
+
+-- Create the database
 CREATE DATABASE IF NOT EXISTS bhraman;
 USE bhraman;
 
--- 2. Create users table
-CREATE TABLE users (
+-- Users Table
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    is_admin TINYINT(1) DEFAULT 0,
     remember_token VARCHAR(255),
-    session_token VARCHAR(255),   
-    session_expiry TIMESTAMP     
+    session_token VARCHAR(255),
+    session_expiry TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Create location table
-CREATE TABLE location (
+-- Location Table
+CREATE TABLE IF NOT EXISTS location (
     location_id INT AUTO_INCREMENT PRIMARY KEY,
     location_name VARCHAR(100) NOT NULL,
     total_rating INT NOT NULL,
@@ -26,8 +29,8 @@ CREATE TABLE location (
     image_url VARCHAR(255) NOT NULL
 );
 
--- 4. Create booking table (linked to users)
-CREATE TABLE booking (
+-- Booking Table
+CREATE TABLE IF NOT EXISTS booking (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     location_id INT NOT NULL,
@@ -38,13 +41,14 @@ CREATE TABLE booking (
     FOREIGN KEY (location_id) REFERENCES location(location_id)
 );
 
--- 5. Create comment table (linked to users and location table)
-CREATE TABLE comment (
-    comment_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+-- Comments Table
+CREATE TABLE IF NOT EXISTS comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     location_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
     comment TEXT NOT NULL,
-    comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (location_id) REFERENCES location(location_id)
 );

@@ -8,6 +8,7 @@ ini_set('display_errors', 1);
 
 $response = null;
 
+
 // Handle POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Debug log
@@ -16,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log('FILES data: ' . print_r($_FILES, true));
     
     try {
-        // Sanitize and validate input
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $hotel_names = trim($_POST['hotel_names'] ?? '');
@@ -115,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Output response
+header('Content-Type: application/json');
 if ($response) {
     echo json_encode($response);
 } else {
