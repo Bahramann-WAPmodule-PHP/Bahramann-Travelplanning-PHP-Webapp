@@ -11,6 +11,17 @@ export default function Home() {
   const isLoggedIn = useSelector((state) => state.LoginSlice.isLoggedIn);
   const navigate = useNavigate();
   const [destinations, setDestinations] = useState([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+const goToLogin = () => {
+  setShowLoginModal(false);
+  navigate("/login");
+};
+
+const closeModal = () => {
+  setShowLoginModal(false);
+};
+
 
   useEffect(() => {
     const fetchTopLocations = async () => {
@@ -58,8 +69,7 @@ export default function Home() {
       if (isLoggedIn) {
         navigate("/search");
       } else {
-        alert("You have to login/signup first");
-        navigate("/login");
+        setShowLoginModal(true);
       }
     };
 
@@ -211,6 +221,28 @@ export default function Home() {
       <PopularDestinations />
       <WhyChooseBhraman />
       <Footer />
+       {showLoginModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/10 bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center">
+            <h2 className="text-xl font-semibold mb-4">Login Required</h2>
+            <p className="mb-6">You need to be logged in to book a tour.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={goToLogin}
+                className="bg-mainRed text-white px-4 py-2 rounded button transition"
+              >
+                Go to Login
+              </button>
+              <button
+                onClick={closeModal}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
