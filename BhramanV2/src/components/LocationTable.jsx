@@ -18,6 +18,7 @@ export default function LocationTable() {
   });
   const [addFormError, setAddFormError] = useState('');
   const [addFormSuccess, setAddFormSuccess] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   // Edit modal state
   const [showEditModal, setShowEditModal] = useState(false);
@@ -80,8 +81,27 @@ export default function LocationTable() {
   // Add Location form handlers
   const handleAddFormChange = e => {
     const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setAddForm(f => ({ ...f, [name]: files[0] }));
+    if (type === 'file' && files[0]) {
+      const file = files[0];
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setAddFormError('Please select a valid image file (JPEG, PNG, GIF, WebP)');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setAddFormError('Image size should be less than 5MB');
+        return;
+      }
+      
+      // Clear any previous errors
+      setAddFormError('');
+      setAddForm(f => ({ ...f, [name]: file }));
+    } else if (type === 'file') {
+      setAddForm(f => ({ ...f, [name]: null }));
     } else {
       setAddForm(f => ({ ...f, [name]: value }));
     }
@@ -90,8 +110,27 @@ export default function LocationTable() {
   // Edit Location form handlers
   const handleEditFormChange = e => {
     const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setEditForm(f => ({ ...f, [name]: files[0] }));
+    if (type === 'file' && files[0]) {
+      const file = files[0];
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setEditFormError('Please select a valid image file (JPEG, PNG, GIF, WebP)');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setEditFormError('Image size should be less than 5MB');
+        return;
+      }
+      
+      // Clear any previous errors
+      setEditFormError('');
+      setEditForm(f => ({ ...f, [name]: file }));
+    } else if (type === 'file') {
+      setEditForm(f => ({ ...f, [name]: null }));
     } else {
       setEditForm(f => ({ ...f, [name]: value }));
     }
@@ -101,34 +140,61 @@ export default function LocationTable() {
     e.preventDefault();
     setAddFormError('');
     setAddFormSuccess('');
-    if (!addForm.title || !addForm.description || !addForm.hotel_names || !addForm.hotel_prices || !addForm.vehicle_type || !addForm.image) {
-      setAddFormError('All fields are required.');
+    
+    // Validate required fields
+    if (!addForm.title.trim() || !addForm.description.trim() || !addForm.hotel_names.trim() || !addForm.hotel_prices.trim() || !addForm.vehicle_type.trim()) {
+      setAddFormError('Title, description, hotel names, hotel prices, and vehicle type are required.');
       return;
     }
+    
+    if (!addForm.image) {
+      setAddFormError('Please select an image.');
+      return;
+    }
+    
+    // Validate image file
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(addForm.image.type)) {
+      setAddFormError('Please select a valid image file (JPEG, PNG, GIF, WebP).');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (addForm.image.size > 5 * 1024 * 1024) {
+      setAddFormError('Image size should be less than 5MB.');
+      return;
+    }
+    
     try {
       const formData = new FormData();
-      formData.append('title', addForm.title);
-      formData.append('description', addForm.description);
-      formData.append('hotel_names', addForm.hotel_names);
-      formData.append('hotel_prices', addForm.hotel_prices);
-      formData.append('vehicle_type', addForm.vehicle_type);
-      formData.append('initial_rating', addForm.initial_rating);
+      formData.append('title', addForm.title.trim());
+      formData.append('description', addForm.description.trim());
+      formData.append('hotel_names', addForm.hotel_names.trim());
+      formData.append('hotel_prices', addForm.hotel_prices.trim());
+      formData.append('vehicle_type', addForm.vehicle_type.trim());
+      formData.append('initial_rating', addForm.initial_rating || '5');
       formData.append('image', addForm.image);
+      
       const res = await fetch(apiRoute.addLocation, {
         method: 'POST',
+        credentials: 'include',
         body: formData
       });
+      
       const data = await res.json();
       if (data.success) {
         setAddForm({ title: '', description: '', hotel_names: '', hotel_prices: '', vehicle_type: '', initial_rating: '', image: null });
-        setAddFormSuccess('Location added successfully!');
         setShowAddModal(false);
+        setShowSuccessPopup(true);
+        // Auto hide popup after 4 seconds
+        setTimeout(() => setShowSuccessPopup(false), 4000);
         fetchLocations();
       } else {
         setAddFormError(data.error || 'Failed to add location.');
       }
     } catch (err) {
-      setAddFormError('Failed to add location.');
+      console.error('Error adding location:', err);
+      setAddFormError('Network error. Please try again.');
     }
   };
 
@@ -174,7 +240,6 @@ export default function LocationTable() {
               </button>
               <h3 className="text-lg font-bold text-mainRed mb-4">Add New Location</h3>
               {addFormError && <div className="mb-2 text-red-500 text-sm">{addFormError}</div>}
-              {addFormSuccess && <div className="mb-2 text-green-600 text-sm">{addFormSuccess}</div>}
               <form onSubmit={handleAddFormSubmit} encType="multipart/form-data" className="space-y-3">
                 {/* ...existing code for add form fields... */}
                 <div>
@@ -202,8 +267,39 @@ export default function LocationTable() {
                   <input type="number" name="initial_rating" min="1" max="5" value={addForm.initial_rating} onChange={handleAddFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-200" placeholder="4" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Image</label>
-                  <input type="file" name="image" accept="image/*" onChange={handleAddFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-200" />
+                  <label className="block text-sm font-medium mb-2">Image</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      onChange={handleAddFormChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      id="add-image-upload"
+                    />
+                    <label
+                      htmlFor="add-image-upload"
+                      className="flex items-center justify-center w-full h-12 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mainRed hover:bg-red-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <span className="text-sm text-gray-600">
+                          {addForm.image ? addForm.image.name : "Choose Image"}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                  {addForm.image && (
+                    <div className="mt-2">
+                      <img
+                        src={URL.createObjectURL(addForm.image)}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded-lg border"
+                      />
+                    </div>
+                  )}
                 </div>
                 <button type="submit" className="w-full bg-mainRed hover:bg-red-600 text-white py-2 rounded-lg font-semibold shadow-md transition">Add Location</button>
               </form>
@@ -229,22 +325,23 @@ export default function LocationTable() {
                 e.preventDefault();
                 setEditFormError('');
                 setEditFormSuccess('');
-                if (!editForm.title || !editForm.description || !editForm.hotel_names || !editForm.hotel_prices || !editForm.vehicle_type) {
+                if (!editForm.title.trim() || !editForm.description.trim() || !editForm.hotel_names.trim() || !editForm.hotel_prices.trim() || !editForm.vehicle_type.trim()) {
                   setEditFormError('All fields except image are required.');
                   return;
                 }
                 try {
                   const formData = new FormData();
                   formData.append('id', editForm.id);
-                  formData.append('title', editForm.title);
-                  formData.append('description', editForm.description);
-                  formData.append('hotel_names', editForm.hotel_names);
-                  formData.append('hotel_prices', editForm.hotel_prices);
-                  formData.append('vehicle_type', editForm.vehicle_type);
-                  formData.append('initial_rating', editForm.initial_rating);
+                  formData.append('title', editForm.title.trim());
+                  formData.append('description', editForm.description.trim());
+                  formData.append('hotel_names', editForm.hotel_names.trim());
+                  formData.append('hotel_prices', editForm.hotel_prices.trim());
+                  formData.append('vehicle_type', editForm.vehicle_type.trim());
+                  formData.append('initial_rating', editForm.initial_rating || '5');
                   if (editForm.image) formData.append('image', editForm.image);
                   const res = await fetch(apiRoute.editLocation, {
                     method: 'POST',
+                    credentials: 'include',
                     body: formData
                   });
                   const data = await res.json();
@@ -256,7 +353,8 @@ export default function LocationTable() {
                     setEditFormError(data.error || 'Failed to update location.');
                   }
                 } catch (err) {
-                  setEditFormError('Failed to update location.');
+                  console.error('Error updating location:', err);
+                  setEditFormError('Network error. Please try again.');
                 }
               }} encType="multipart/form-data" className="space-y-3">
                 {/* ...existing code for edit form fields... */}
@@ -285,8 +383,39 @@ export default function LocationTable() {
                   <input type="number" name="initial_rating" min="1" max="5" value={editForm.initial_rating} onChange={handleEditFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-200" placeholder="4" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Image <span className="text-xs text-gray-400">(leave blank to keep current)</span></label>
-                  <input type="file" name="image" accept="image/*" onChange={handleEditFormChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-200" />
+                  <label className="block text-sm font-medium mb-2">Image <span className="text-xs text-gray-400">(leave blank to keep current)</span></label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      onChange={handleEditFormChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      id="edit-image-upload"
+                    />
+                    <label
+                      htmlFor="edit-image-upload"
+                      className="flex items-center justify-center w-full h-12 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mainRed hover:bg-red-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <span className="text-sm text-gray-600">
+                          {editForm.image ? editForm.image.name : "Choose New Image"}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                  {editForm.image && (
+                    <div className="mt-2">
+                      <img
+                        src={URL.createObjectURL(editForm.image)}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded-lg border"
+                      />
+                    </div>
+                  )}
                 </div>
                 <button type="submit" className="w-full bg-mainRed hover:bg-red-600 text-white py-2 rounded-lg font-semibold shadow-md transition">Update Location</button>
               </form>
@@ -372,6 +501,21 @@ export default function LocationTable() {
           </table>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-slide-down">
+          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3">
+            {/* Success Icon */}
+            <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            
+            {/* Success Message */}
+            <span className="font-medium">Location added successfully!</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
