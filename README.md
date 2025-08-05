@@ -46,7 +46,7 @@
 -   **Backend:**
     -   Once Apache is running, the backend is accessible. You can test the connection by navigating to:
       ```
-      http://localhost/Bhramanapp/Backend/main.php
+      http://localhost/Bhramanapp/Backend
       ```
 
 -   **Frontend:**
