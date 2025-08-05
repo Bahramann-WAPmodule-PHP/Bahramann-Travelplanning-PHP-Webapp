@@ -1,11 +1,10 @@
 <?php
 require_once '../../config/db.php';
 require_once '../../config/common_api.php';
-header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $id = intval($_POST['id'] ?? 0);
+        $id = intval($_POST['id'] ?? $_POST['location_id'] ?? 0);
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $hotel_names = trim($_POST['hotel_names'] ?? '');
@@ -66,6 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $pdo->prepare($sql);
         $success = $stmt->execute($params);
+
+        header('Content-Type: application/json');
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Location updated successfully!']);
         } else {

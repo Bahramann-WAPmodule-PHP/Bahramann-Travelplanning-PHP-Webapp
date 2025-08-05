@@ -67,8 +67,8 @@ export default function BookingTable() {
           <thead>
             <tr className="bg-red-100 text-mainRed">
               <th className="py-3 px-4 font-semibold text-left rounded-tl-xl">Booking ID</th>
-              <th className="py-3 px-4 font-semibold text-left">User ID</th>
-              <th className="py-3 px-4 font-semibold text-left">Location ID</th>
+              <th className="py-3 px-4 font-semibold text-left">Username</th>
+              <th className="py-3 px-4 font-semibold text-left">Location Name</th>
               <th className="py-3 px-4 font-semibold text-left">Vehicle Type</th>
               <th className="py-3 px-4 font-semibold text-left">People</th>
               <th className="py-3 px-4 font-semibold text-left">Date</th>
@@ -85,8 +85,8 @@ export default function BookingTable() {
                 <React.Fragment key={booking.booking_id}>
                   <tr className={idx % 2 === 0 ? 'bg-white' : 'bg-red-50 hover:bg-red-100 transition'}>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.booking_id}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">{booking.user_id}</td>
-                    <td className="py-2 px-4 border-b border-gray-100">{booking.location_id}</td>
+                    <td className="py-2 px-4 border-b border-gray-100">{booking.username || 'Unknown User'}</td>
+                    <td className="py-2 px-4 border-b border-gray-100">{booking.location_name || 'Unknown Location'}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.vehicle_type}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.number_of_people}</td>
                     <td className="py-2 px-4 border-b border-gray-100">{booking.booking_date}</td>
